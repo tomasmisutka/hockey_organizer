@@ -1,5 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
+// import 'package:hockey_organizer/screens/login_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
 class HockeyOrganizer extends StatelessWidget {
@@ -11,15 +12,9 @@ class HockeyOrganizer extends StatelessWidget {
       animationDuration: Duration(milliseconds: 250),
       splashTransition: SplashTransition.scaleTransition,
       pageTransitionType: PageTransitionType.fade,
-      nextScreen: Scaffold(body: Container(color: Colors.red)),
-      // pageTransitionType: PageTransitionType.scale,
-      // nextScreen: Scaffold(
-      //   body: Container(
-      //     color: Colors.lightBlue,
-      //     alignment: Alignment.center,
-      //     child: Text('test'),
-      //   ),
-      // ),
+      nextScreen: Scaffold(
+        body: Container(),
+      ),
     );
   }
 }
