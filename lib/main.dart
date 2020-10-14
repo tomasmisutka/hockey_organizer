@@ -54,6 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            const SizedBox(height: 15),
+            Text('this is only git test'),
           ],
         ),
       ),
