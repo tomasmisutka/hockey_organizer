@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'screens/hockey_organizer.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(HockeyOrganizer());
 
-class MyApp extends StatelessWidget {
+class HockeyOrganizer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Hockey Organizer',
       debugShowCheckedModeBanner: false,
-      // debugShowCheckedModeBanner: false,
-      home: HockeyOrganizer(),
+      home: IntroSplashScreen(),
     );
   }
 }
