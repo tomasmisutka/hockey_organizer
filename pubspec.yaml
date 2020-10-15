@@ -27,6 +27,7 @@ dependencies:
   animated_splash_screen: ^1.0.1+2
   page_transition: ^1.1.7+2
   passwordfield: ^0.0.82
+  shimmer: ^1.1.2
   cupertino_icons: ^1.0.0
 
 dev_dependencies:

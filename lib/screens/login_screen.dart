@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/components/CustomTextField.dart';
+import 'package:shimmer/shimmer.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -57,28 +58,40 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         _buildSeparator(),
         RaisedButton(
+          elevation: 15,
           color: Colors.redAccent,
           onPressed: () {},
           padding: EdgeInsets.symmetric(vertical: 15),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          child: Text('Sign in', style: TextStyle(fontSize: 20)),
-          textColor: Colors.white,
+          child: Shimmer.fromColors(
+              baseColor: Colors.white,
+              highlightColor: Colors.black54,
+              child: Text('Sign in', style: TextStyle(fontSize: 20))),
         ),
       ],
     );
   }
 
   Widget _buildThirdPartyLoginButton(String imagePath, String text) {
-    return FlatButton(
-      onPressed: () {},
-      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-      shape: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Image.asset(imagePath, height: 25, width: 25),
-          Text(text, style: TextStyle(fontSize: 20)),
-        ],
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.red, width: 2),
+      ),
+      child: RaisedButton(
+        elevation: 15,
+        color: Colors.white,
+        onPressed: () {},
+        shape: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Image.asset(imagePath, height: 25, width: 25),
+            Text(text, style: TextStyle(fontSize: 20)),
+          ],
+        ),
       ),
     );
   }

@@ -17,15 +17,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration:
-          BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10), boxShadow: [
-        BoxShadow(
-          color: Colors.black,
-          blurRadius: 3,
-          spreadRadius: 2,
-          offset: Offset(1, 3),
-        )
-      ]),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black54,
+            blurRadius: 3,
+            spreadRadius: 2,
+            offset: Offset(1, 3),
+          )
+        ],
+      ),
       child: Row(
         children: [
           Expanded(
