@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void focusPasswordTextField(String value) => _passwordNode.requestFocus();
 
-  Widget _buildSeparator() => const SizedBox(height: 10);
+  Widget _buildSeparator() => const SizedBox(height: 15);
 
   Widget _buildManualLogin() {
     return Column(
@@ -57,11 +57,11 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         _buildSeparator(),
         RaisedButton(
-          color: Colors.lightBlue,
+          color: Colors.redAccent,
           onPressed: () {},
           padding: EdgeInsets.symmetric(vertical: 15),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          child: Text('Sign in', style: TextStyle(fontSize: 17)),
+          child: Text('Sign in', style: TextStyle(fontSize: 20)),
           textColor: Colors.white,
         ),
       ],

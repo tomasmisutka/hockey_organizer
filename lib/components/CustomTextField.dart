@@ -17,7 +17,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Colors.lightBlue, borderRadius: BorderRadius.circular(10)),
+      decoration:
+          BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10), boxShadow: [
+        BoxShadow(
+          color: Colors.black,
+          blurRadius: 3,
+          spreadRadius: 2,
+          offset: Offset(1, 3),
+        )
+      ]),
       child: Row(
         children: [
           Expanded(
@@ -35,8 +43,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   color: Colors.white,
                 ),
                 hintText: widget.isPasswordType == true ? 'Password' : 'Email address',
-                hintStyle: TextStyle(color: Colors.white),
+                hintStyle: TextStyle(color: Colors.white, fontSize: 13),
                 border: InputBorder.none,
+              ),
+              cursorColor: Colors.white,
+              style: TextStyle(
+                color: Colors.white,
               ),
               validator: (String password) {
                 if (password.trim().isEmpty) {
