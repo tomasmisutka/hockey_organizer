@@ -33,6 +33,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         children: [
           Expanded(
             child: TextFormField(
+              textAlignVertical: TextAlignVertical.center,
               controller: widget.controller,
               focusNode: widget.focusNode,
               keyboardType: TextInputType.emailAddress,

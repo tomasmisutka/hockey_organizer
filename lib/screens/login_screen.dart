@@ -66,32 +66,27 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Shimmer.fromColors(
               baseColor: Colors.white,
               highlightColor: Colors.black54,
-              child: Text('Sign in', style: TextStyle(fontSize: 20))),
+              child: Text('Sign in', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900))),
         ),
       ],
     );
   }
 
-  Widget _buildThirdPartyLoginButton(String imagePath, String text) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.red, width: 2),
-      ),
-      child: RaisedButton(
-        elevation: 15,
-        color: Colors.white,
-        onPressed: () {},
-        shape: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Image.asset(imagePath, height: 25, width: 25),
-            Text(text, style: TextStyle(fontSize: 20)),
-          ],
-        ),
+  Widget _buildThirdPartyLoginButton(String imagePath, String text, {bool isGoogle = true}) {
+    return RaisedButton(
+      elevation: 15,
+      color: Colors.white,
+      onPressed: () {},
+      shape: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(width: 2, color: isGoogle ? Colors.red : Colors.blue)),
+      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Image.asset(imagePath, height: 25, width: 25),
+          Text(text, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
+        ],
       ),
     );
   }
@@ -103,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         _buildThirdPartyLoginButton('assets/icon_google.png', 'Google'),
         _buildSeparator(),
-        _buildThirdPartyLoginButton('assets/icon_facebook.png', 'Facebook'),
+        _buildThirdPartyLoginButton('assets/icon_facebook.png', 'Facebook', isGoogle: false),
       ],
     );
   }
@@ -112,6 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.white24,
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
@@ -128,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   child: Text(
                     'Login',
-                    style: TextStyle(fontSize: 45),
+                    style: TextStyle(color: Colors.white, fontSize: 50),
                   ),
                   margin: EdgeInsets.only(bottom: 10),
                 ),
