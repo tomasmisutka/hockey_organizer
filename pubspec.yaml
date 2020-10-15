@@ -23,6 +23,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  flutter_localizations:
+    sdk: flutter
+
   #dependancy packages
   animated_splash_screen: ^1.0.1+2
   page_transition: ^1.1.7+2
@@ -39,24 +43,12 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - lang/
 
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware.
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
   fonts:
-    - family: Bellota
-      fonts:
-        - asset: fonts/Bellota-Bold.ttf
-        - asset: fonts/Bellota-Regular.ttf
-          weight: 500
-        - asset: fonts/Bellota-Light.ttf
-          weight: 100
     - family: AnonymousPro
       fonts:
         - asset: fonts/AnonymousPro-Bold.ttf
-          weight: 900
         - asset: fonts/AnonymousPro-Regular.ttf
           weight: 400
 

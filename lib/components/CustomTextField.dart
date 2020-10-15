@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hockey_organizer/app_localization.dart';
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
@@ -16,6 +17,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   bool _isObscureText = true;
   @override
   Widget build(BuildContext context) {
+    AppLocalizations _appLocalizations = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Colors.black,
@@ -46,7 +48,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   size: 20,
                   color: Colors.white,
                 ),
-                hintText: widget.isPasswordType == true ? 'Password' : 'Email address',
+                hintText: widget.isPasswordType == true
+                    ? _appLocalizations.translate('password')
+                    : _appLocalizations.translate('email_address'),
                 hintStyle: TextStyle(color: Colors.white, fontSize: 13),
                 border: InputBorder.none,
               ),

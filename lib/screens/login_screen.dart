@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/components/CustomTextField.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -38,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildSeparator() => const SizedBox(height: 15);
 
-  Widget _buildManualLogin() {
+  Widget _buildManualLogin(AppLocalizations appLocalizations) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -66,7 +67,10 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Shimmer.fromColors(
               baseColor: Colors.white,
               highlightColor: Colors.black54,
-              child: Text('Sign in', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900))),
+              child: Text(
+                appLocalizations.translate('sign_in'),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+              )),
         ),
       ],
     );
@@ -105,6 +109,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLocalizations = AppLocalizations.of(context);
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.white24,
@@ -123,12 +129,12 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Container(
                   child: Text(
-                    'Login',
+                    appLocalizations.translate('login'),
                     style: TextStyle(color: Colors.white, fontSize: 50),
                   ),
                   margin: EdgeInsets.only(bottom: 10),
                 ),
-                _buildManualLogin(),
+                _buildManualLogin(appLocalizations),
                 const SizedBox(height: 35),
                 _buildThirdPartyLogin(),
               ],
