@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>405370639411-1t4me5ee9nb6aeblfp79k9khp05pca4h.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.405370639411-1t4me5ee9nb6aeblfp79k9khp05pca4h</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCV6IRAQgJ1qxsB5kgaAC-MNCnEdGGy3YY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>405370639411</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>hockeyOrganizer.hockeyOrganizer</string>
+	<key>PROJECT_ID</key>
+	<string>hockey-organizer</string>
+	<key>STORAGE_BUCKET</key>
+	<string>hockey-organizer.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:405370639411:ios:0eed4e887732fa72e9bf46</string>
+	<key>DATABASE_URL</key>
+	<string>https://hockey-organizer.firebaseio.com</string>
+</dict>
+</plist>
