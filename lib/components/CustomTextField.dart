@@ -23,68 +23,56 @@ class _CustomTextFieldState extends State<CustomTextField> {
         color: Colors.black,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black54,
-            blurRadius: 3,
-            spreadRadius: 2,
-            offset: Offset(1, 3),
-          )
+          BoxShadow(color: Colors.black54, blurRadius: 3, spreadRadius: 2, offset: Offset(1, 3))
         ],
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextFormField(
-              textAlignVertical: TextAlignVertical.center,
-              controller: widget.controller,
-              focusNode: widget.focusNode,
-              keyboardType: TextInputType.emailAddress,
-              textInputAction:
-                  widget.isPasswordType == true ? TextInputAction.done : TextInputAction.next,
-              obscureText: widget.isPasswordType == true ? _isObscureText : false,
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  widget.isPasswordType == true ? Icons.https_outlined : Icons.email_outlined,
-                  size: 20,
+      child: TextFormField(
+        textAlignVertical: TextAlignVertical.center,
+        controller: widget.controller,
+        focusNode: widget.focusNode,
+        keyboardType: TextInputType.emailAddress,
+        textInputAction:
+            widget.isPasswordType == true ? TextInputAction.done : TextInputAction.next,
+        obscureText: widget.isPasswordType == true ? _isObscureText : false,
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            widget.isPasswordType == true ? Icons.https_outlined : Icons.email_outlined,
+            size: 20,
+            color: Colors.white,
+          ),
+          suffixIcon: widget.isPasswordType == true
+              ? IconButton(
+                  splashColor: Colors.transparent,
+                  icon: Icon(Icons.remove_red_eye_outlined),
                   color: Colors.white,
-                ),
-                hintText: widget.isPasswordType == true
-                    ? _appLocalizations.translate('password')
-                    : _appLocalizations.translate('email_address'),
-                hintStyle: TextStyle(color: Colors.white, fontSize: 13),
-                border: InputBorder.none,
-              ),
-              cursorColor: Colors.white,
-              style: TextStyle(
-                color: Colors.white,
-              ),
-              validator: (String password) {
-                if (password.trim().isEmpty) {
-                  return 'Password is required';
-                }
-                if (password.trim().length < 8) {
-                  return 'Password si too short';
-                }
-                return 'Good';
-              },
-              onFieldSubmitted: widget.onFieldSubmitted,
-            ),
-          ),
-          Visibility(
-            visible: widget.isPasswordType,
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _isObscureText = !_isObscureText;
-                });
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Icon(Icons.remove_red_eye_outlined, size: 20, color: Colors.white),
-              ),
-            ),
-          ),
-        ],
+                  iconSize: 20,
+                  onPressed: () {
+                    setState(() {
+                      _isObscureText = !_isObscureText;
+                    });
+                  },
+                )
+              : null,
+          hintText: widget.isPasswordType == true
+              ? _appLocalizations.translate('password')
+              : _appLocalizations.translate('email_address'),
+          hintStyle: TextStyle(color: Colors.white, fontSize: 13),
+          border: InputBorder.none,
+        ),
+        cursorColor: Colors.white,
+        style: TextStyle(
+          color: Colors.white,
+        ),
+        validator: (String password) {
+          if (password.trim().isEmpty) {
+            return 'Password is required';
+          }
+          if (password.trim().length < 8) {
+            return 'Password si too short';
+          }
+          return 'Good';
+        },
+        onFieldSubmitted: widget.onFieldSubmitted,
       ),
     );
   }

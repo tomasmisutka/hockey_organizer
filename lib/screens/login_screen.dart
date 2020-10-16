@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/components/CustomTextField.dart';
+import 'package:hockey_organizer/services/authentication.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -39,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildSeparator() => const SizedBox(height: 15);
 
-  Widget _buildManualLogin(AppLocalizations appLocalizations) {
+  Widget _buildManualLogin(BuildContext context, AppLocalizations appLocalizations) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -61,7 +63,12 @@ class _LoginScreenState extends State<LoginScreen> {
         RaisedButton(
           elevation: 15,
           color: Colors.redAccent,
-          onPressed: () {},
+          onPressed: () {
+            context.read<AuthenticationService>().signIn(
+                  email: _loginController.text.trim(),
+                  password: _passwordController.text.trim(),
+                );
+          },
           padding: EdgeInsets.symmetric(vertical: 15),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: Shimmer.fromColors(
@@ -125,7 +132,6 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   child: Text(
@@ -134,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   margin: EdgeInsets.only(bottom: 10),
                 ),
-                _buildManualLogin(appLocalizations),
+                _buildManualLogin(context, appLocalizations),
                 const SizedBox(height: 35),
                 _buildThirdPartyLogin(),
               ],

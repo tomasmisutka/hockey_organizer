@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "405370639411",
+    "firebase_url": "https://hockey-organizer.firebaseio.com",
+    "project_id": "hockey-organizer",
+    "storage_bucket": "hockey-organizer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:405370639411:android:e55ef0de3483e71be9bf46",
+        "android_client_info": {
+          "package_name": "hockeyOrganizer.hockey_organizer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "405370639411-d8e008hn2klbjq9ts2s7q5r92q2pqd3t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXHsxFHS1csQBj2Loh7DR8xYQ9RjCHieA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "405370639411-d8e008hn2klbjq9ts2s7q5r92q2pqd3t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
