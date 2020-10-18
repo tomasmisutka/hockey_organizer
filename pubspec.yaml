@@ -52,9 +52,9 @@ flutter:
   fonts:
     - family: AnonymousPro
       fonts:
-        - asset: fonts/AnonymousPro-Bold.ttf
         - asset: fonts/AnonymousPro-Regular.ttf
-          weight: 400
+        - asset: fonts/AnonymousPro-Bold.ttf
+          weight: 900
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
