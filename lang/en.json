@@ -1,9 +1,25 @@
 {
-  "login": "Login",
   "sign_in": "Sign in",
   "email_address": "Email address",
   "password": "Password",
-  "have_not_account": "Don't have an account?",
+  "repeat_password": "Repeat password",
+  "have_not_account": "No account?",
   "sign_up": "Sign up",
-  "registration": "Registration"
+  "registration": "Registration",
+  "account_does_not_exists": "This account does not exists",
+  "wrong_password": "Wrong password",
+  "weak_password": "The password is too weak",
+  "account_already_exists": "This account already exists",
+  "forgot_password": "Forgot password?",
+  "reset_password": "Reset password",
+  "submit": "Submit",
+  "name_and_surname": "Name and Surname",
+  "continue_with": "Continue with",
+  "enter_your_name": "Enter your name",
+  "so_long_name": "Your name is too long",
+  "verification_screen_description": "Verification mail has been sent to your email address. Please verify your mail and restart application. If you can not see verification email, please, check your spam folder.",
+  "best_regards": "Best Regards, your Hockey Organizer Team",
+  "or": "Or",
+  "enter_email_address": "Enter email address",
+  "invalid_email_address": "Invalid email address"
 }

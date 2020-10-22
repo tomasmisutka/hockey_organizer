@@ -1,8 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/services/authentication.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
+  final User firebaseUser;
+
+  HomeScreen(this.firebaseUser);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,7 +18,7 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'this is a dashboard screen',
+                'Home screen for user: ' + firebaseUser.displayName.toString(),
                 style: TextStyle(fontSize: 20, color: Colors.white),
               ),
               const SizedBox(height: 15),

@@ -1,8 +1,25 @@
 {
-  "login": "Prihlásenie",
   "sign_in": "Prihlásiť sa",
   "email_address": "Emailová adresa",
-  "password": "heslo",
+  "password": "Heslo",
+  "repeat_password": "Zopakujte heslo",
   "have_not_account": "Nemáte účet?",
-  "sign_up": "Registrovať sa"
+  "sign_up": "Registrovať sa",
+  "registration": "Registrácia",
+  "account_does_not_exists": "Tento účet neexistuje",
+  "wrong_password": "Zadali ste nesprávne heslo",
+  "weak_password": "Vaše heslo je príliš slabé",
+  "account_already_exists": "Tento účet už existuje",
+  "forgot_password": "Zabudnuté heslo?",
+  "reset_password": "Obnoviť heslo",
+  "submit": "Potvrdiť",
+  "name_and_surname": "Meno a priezvisko",
+  "continue_with": "Pokračovať cez",
+  "enter_your_name": "Zadajte meno",
+  "so_long_name": "Meno je príliš dlhé",
+  "verification_screen_description": "Overovací email bol odoslaný. Prosím, potvrďte email a reštartujte aplikáciu. Ak overovací mail nevidíte, skontrolujte spam adresár.",
+  "best_regards": "S pozdravom, váš Hockey Organizer Team",
+  "or": "Alebo",
+  "enter_email_address": "Zadajte emailovú adresu",
+  "invalid_email_address": "Neplatná emailová adresa"
 }
