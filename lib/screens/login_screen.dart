@@ -499,7 +499,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       key: _scaffoldKey,
       body: ModalProgressHUD(
         inAsyncCall: isLoading,
-        progressIndicator: SpinKitWave(size: 45, color: Colors.black87),
+        progressIndicator: SpinKitCubeGrid(size: 55, color: Colors.black87),
         child: NotificationListener<OverscrollIndicatorNotification>(
           onNotification: (overscroll) {
             overscroll.disallowGlow();
