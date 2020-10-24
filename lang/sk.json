@@ -18,8 +18,11 @@
   "enter_your_name": "Zadajte meno",
   "so_long_name": "Meno je príliš dlhé",
   "verification_screen_description": "Overovací email bol odoslaný. Prosím, potvrďte email a reštartujte aplikáciu. Ak overovací mail nevidíte, skontrolujte spam adresár.",
-  "best_regards": "S pozdravom, váš Hockey Organizer Team",
+  "best_regards": "S pozdravom, váš Hockey Organizer Tím",
   "or": "Alebo",
   "enter_email_address": "Zadajte emailovú adresu",
-  "invalid_email_address": "Neplatná emailová adresa"
+  "invalid_email_address": "Neplatná emailová adresa",
+  "passwords_not_same": "Heslá sa nezhodujú",
+  "back": "Späť",
+  "no_internet_connection": "Nemáte prístup na Internet"
 }

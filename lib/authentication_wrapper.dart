@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hockey_organizer/screens/login_screen.dart';
-import 'package:hockey_organizer/screens/verification_screen.dart';
+import 'package:hockey_organizer/screens/login.dart';
+import 'package:hockey_organizer/screens/verification.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/home_screen.dart';
+import 'screens/dashboard.dart';
 
 class AuthenticationWrapper extends StatelessWidget {
   Future<void> reloadUserInformation(User firebaseUser) async {
@@ -21,6 +21,6 @@ class AuthenticationWrapper extends StatelessWidget {
     if (firebaseUser.emailVerified == false) {
       return VerificationScreen();
     }
-    return HomeScreen(firebaseUser);
+    return Dashboard(firebaseUser);
   }
 }

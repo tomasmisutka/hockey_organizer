@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/app_localization.dart';
-import 'package:hockey_organizer/screens/intro_splash_screen.dart';
 import 'package:hockey_organizer/services/authentication.dart';
 import 'package:provider/provider.dart';
+import 'package:splash_screen_view/SplashScreenView.dart';
+
+import 'authentication_wrapper.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,9 +30,25 @@ class HockeyOrganizer extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         supportedLocales: AppLocalizations.supportedLocales(),
         localizationsDelegates: AppLocalizations.localizationsDelegates(),
-        localeResolutionCallback: (locale, supportedLocales) =>
-            AppLocalizations.localeResolutionCallback(locale, supportedLocales),
-        home: IntroSplashScreen(),
+        localeResolutionCallback: AppLocalizations.localeResolutionCallback,
+        home: _Splash(),
+      ),
+    );
+  }
+}
+
+class _Splash extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SplashScreenView(
+        home: AuthenticationWrapper(),
+        duration: 4000,
+        imageSize: 300,
+        imageSrc: "assets/hockey.png",
+        text: 'Hockey\n    Organizer',
+        textType: TextType.NormalText,
+        textStyle: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, height: 1.5),
       ),
     );
   }

@@ -59,26 +59,29 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      textAlignVertical: TextAlignVertical.center,
-      focusNode: widget.focusNode,
-      controller: widget.controller,
-      textCapitalization: widget.type == TextFieldType.NAME_AND_SURNAME
-          ? TextCapitalization.words
-          : TextCapitalization.none,
-      keyboardType: TextInputType.emailAddress,
-      textInputAction: _renderInputAction(),
-      style: TextStyle(fontSize: 16.0, color: Colors.black),
-      obscureText: widget.type == TextFieldType.PASSWORD ? _isObscureText : false,
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        prefixIcon: _renderPrefixIcon(),
-        suffixIcon: _renderSuffixIcon(),
-        hintText: widget.hintText,
-        hintStyle: TextStyle(fontSize: 17),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+      child: TextFormField(
+        textAlignVertical: TextAlignVertical.center,
+        focusNode: widget.focusNode,
+        controller: widget.controller,
+        textCapitalization: widget.type == TextFieldType.NAME_AND_SURNAME
+            ? TextCapitalization.words
+            : TextCapitalization.none,
+        keyboardType: TextInputType.emailAddress,
+        textInputAction: _renderInputAction(),
+        style: TextStyle(fontSize: 16.0, color: Colors.black),
+        obscureText: widget.type == TextFieldType.PASSWORD ? _isObscureText : false,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          prefixIcon: _renderPrefixIcon(),
+          suffixIcon: _renderSuffixIcon(),
+          hintText: widget.hintText,
+          hintStyle: TextStyle(fontSize: 17),
+        ),
+        cursorColor: Colors.black,
+        onFieldSubmitted: widget.onFieldSubmitted,
       ),
-      cursorColor: Colors.black,
-      onFieldSubmitted: widget.onFieldSubmitted,
     );
   }
 }

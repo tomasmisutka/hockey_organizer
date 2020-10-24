@@ -1,8 +1,10 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hockey_organizer/components/CustomTextField.dart';
+import 'package:hockey_organizer/screens/reset_password.dart';
 import 'package:hockey_organizer/services/authentication.dart';
 import 'package:hockey_organizer/utils/buble_indicator_painter.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -22,21 +24,21 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final FocusNode _loginEmailFocusNode = FocusNode();
-  final FocusNode _loginPasswordFocusNode = FocusNode();
+  FocusNode _loginPasswordFocusNode = FocusNode();
+  FocusNode _loginEmailFocusNode = FocusNode();
 
-  final FocusNode _registerPasswordFocusNode = FocusNode();
-  final FocusNode _registerEmailFocusNode = FocusNode();
-  final FocusNode _registerNameFocusNode = FocusNode();
-  final FocusNode _registerRepeatPasswordFocusNode = FocusNode();
+  FocusNode _registerNameFocusNode = FocusNode();
+  FocusNode _registerEmailFocusNode = FocusNode();
+  FocusNode _registerPasswordFocusNode = FocusNode();
+  FocusNode _registerRepeatPasswordFocusNode = FocusNode();
 
   TextEditingController _loginEmailController = TextEditingController();
   TextEditingController _loginPasswordController = TextEditingController();
 
-  TextEditingController _signUpEmailController = TextEditingController();
-  TextEditingController _signUpNameController = TextEditingController();
-  TextEditingController _signUpPasswordController = TextEditingController();
-  TextEditingController _signUpConfirmPasswordController = TextEditingController();
+  TextEditingController _registerNameController = TextEditingController();
+  TextEditingController _registerEmailController = TextEditingController();
+  TextEditingController _registerPasswordController = TextEditingController();
+  TextEditingController _registerRepeatPasswordController = TextEditingController();
 
   PageController _pageController;
 
@@ -49,9 +51,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   void unFocusAllNodes() {
     _loginEmailFocusNode.unfocus();
     _loginPasswordFocusNode.unfocus();
-    _registerPasswordFocusNode.unfocus();
-    _registerEmailFocusNode.unfocus();
     _registerNameFocusNode.unfocus();
+    _registerEmailFocusNode.unfocus();
+    _registerPasswordFocusNode.unfocus();
+    _registerRepeatPasswordFocusNode.unfocus();
   }
 
   @override
@@ -76,18 +79,17 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   void _onPressTabBarSignInButton() {
-    _pageController.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.linear);
+    _pageController.animateToPage(0, duration: Duration(milliseconds: 300), curve: Curves.linear);
   }
 
   void _onPressTabBarSignUPButton() {
-    _pageController?.animateToPage(1, duration: Duration(milliseconds: 500), curve: Curves.linear);
+    _pageController?.animateToPage(1, duration: Duration(milliseconds: 300), curve: Curves.linear);
   }
 
   void onPressSignInButton(BuildContext context, AppLocalizations appLocalizations) async {
-    if (validEmailAddress(_loginEmailController.text.trim().toLowerCase(), appLocalizations) ==
-        false) {
-      return;
-    }
+    String email = _loginEmailController.text.trim();
+    if (await validInternetConnection(appLocalizations) == false) return;
+    if (validEmailAddress(email.toLowerCase(), appLocalizations) == false) return;
     setState(() {
       isLoading = true;
     });
@@ -112,16 +114,13 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   void onPressSignUpButton(BuildContext context, AppLocalizations appLocalizations) async {
-    if (validNameAndSurname(_signUpNameController.text.trim(), appLocalizations) == false) {
-      return;
-    }
-    if (validEmailAddress(_signUpEmailController.text.trim().toLowerCase(), appLocalizations) ==
-        false) {
-      return;
-    }
-    if (validPassword(_signUpPasswordController.text.trim(), appLocalizations) == false) {
-      return;
-    }
+    String emailAddress = _registerEmailController.text.trim();
+    if (await validInternetConnection(appLocalizations) == false) return;
+    if (validNameAndSurname(appLocalizations) == false) return;
+    if (validEmailAddress(emailAddress.toLowerCase(), appLocalizations) == false) return;
+    if (validPassword(appLocalizations) == false) return;
+    if (validRepeatPassword(appLocalizations) == false) return;
+
     setState(() {
       isLoading = true;
     });
@@ -129,9 +128,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         .read<AuthenticationService>()
         .signUp(
           context,
-          displayName: _signUpNameController.text.trim(),
-          email: _signUpEmailController.text.trim().toLowerCase(),
-          password: _signUpPasswordController.text.trim(),
+          displayName: _registerNameController.text.trim(),
+          email: _registerEmailController.text.trim().toLowerCase(),
+          password: _registerPasswordController.text.trim(),
         )
         .then((error) {
       setState(() {
@@ -146,15 +145,15 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     }
   }
 
-  bool validEmailAddress(String userInput, AppLocalizations appLocalizations) {
-    if (userInput.isEmpty == true) {
+  bool validEmailAddress(String emailAddress, AppLocalizations appLocalizations) {
+    if (emailAddress.isEmpty == true) {
       setState(() {
         _errorText = appLocalizations.translate('enter_email_address');
       });
       showInSnackBar(_errorText);
       return false;
     }
-    bool isValid = EmailValidator.validate(userInput);
+    bool isValid = EmailValidator.validate(emailAddress);
     if (isValid == false) {
       setState(() {
         _errorText = appLocalizations.translate('invalid_email_address');
@@ -165,15 +164,16 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     return isValid;
   }
 
-  bool validNameAndSurname(String userInput, AppLocalizations appLocalizations) {
-    if (userInput.isEmpty == true) {
+  bool validNameAndSurname(AppLocalizations appLocalizations) {
+    String name = _registerNameController.text.trim();
+    if (name.isEmpty == true) {
       setState(() {
         _errorText = appLocalizations.translate('enter_your_name');
       });
       showInSnackBar(_errorText);
       return false;
     }
-    if (userInput.length > 20) {
+    if (name.length > 20) {
       setState(() {
         _errorText = appLocalizations.translate('so_long_name');
       });
@@ -183,8 +183,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     return true;
   }
 
-  bool validPassword(String userInput, AppLocalizations appLocalizations) {
-    if (userInput.length < 8) {
+  bool validPassword(AppLocalizations appLocalizations) {
+    String password = _registerPasswordController.text.trim();
+    if (password.length < 8) {
       setState(() {
         _errorText = appLocalizations.translate('weak_password');
       });
@@ -192,6 +193,31 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       return false;
     }
     return true;
+  }
+
+  bool validRepeatPassword(AppLocalizations appLocalizations) {
+    String password = _registerPasswordController.text.trim();
+    String repeatedPassword = _registerRepeatPasswordController.text.trim();
+    if (password != repeatedPassword) {
+      setState(() {
+        _errorText = appLocalizations.translate('passwords_not_same');
+      });
+      showInSnackBar(_errorText);
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> validInternetConnection(AppLocalizations appLocalizations) async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile)
+      return true;
+    else if (connectivityResult == ConnectivityResult.wifi) return true;
+    setState(() {
+      _errorText = appLocalizations.translate('no_internet_connection');
+    });
+    showInSnackBar(_errorText);
+    return false;
   }
 
   void focusLoginPasswordTextField(String value) => _loginPasswordFocusNode.requestFocus();
@@ -213,6 +239,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         textAlign: TextAlign.center,
         style: TextStyle(color: Colors.black, fontSize: 20),
       ),
+      shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))),
       backgroundColor: Colors.amber,
       duration: Duration(seconds: 3),
     ));
@@ -347,22 +376,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, FocusNode node, String hintText,
-      TextFieldType type, Function(String) onFieldSubmitted,
-      {bool isRepeatingPassword = false}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-      child: CustomTextField(
-        controller: controller,
-        focusNode: node,
-        hintText: hintText,
-        type: type,
-        onFieldSubmitted: onFieldSubmitted,
-        isRepeatingPassword: isRepeatingPassword,
-      ),
-    );
-  }
-
   Widget _buildSignIn(BuildContext context, AppLocalizations appLocalizations) {
     return Container(
       padding: EdgeInsets.only(top: 23.0),
@@ -380,20 +393,22 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   height: 190.0,
                   child: Column(
                     children: [
-                      _buildTextField(
-                          _loginEmailController,
-                          _loginEmailFocusNode,
-                          appLocalizations.translate('email_address'),
-                          TextFieldType.EMAIL,
-                          focusLoginPasswordTextField),
+                      CustomTextField(
+                        controller: _loginEmailController,
+                        focusNode: _loginEmailFocusNode,
+                        hintText: appLocalizations.translate('email_address'),
+                        type: TextFieldType.EMAIL,
+                        onFieldSubmitted: focusLoginPasswordTextField,
+                      ),
                       _buildDivider(),
-                      _buildTextField(
-                          _loginPasswordController,
-                          _loginPasswordFocusNode,
-                          appLocalizations.translate('password'),
-                          TextFieldType.PASSWORD,
-                          unFocusLoginPasswordTextField,
-                          isRepeatingPassword: true),
+                      CustomTextField(
+                        controller: _loginPasswordController,
+                        focusNode: _loginPasswordFocusNode,
+                        hintText: appLocalizations.translate('password'),
+                        type: TextFieldType.PASSWORD,
+                        onFieldSubmitted: unFocusLoginPasswordTextField,
+                        isRepeatingPassword: true,
+                      ),
                     ],
                   ),
                 ),
@@ -404,7 +419,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           _buildOrTextWithDividers(appLocalizations),
           const SizedBox(height: 10),
           FlatButton(
-              onPressed: () {},
+              onPressed: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => ResetPasswordScreen())),
               child: Text(
                 appLocalizations.translate('forgot_password'),
                 style: TextStyle(color: Colors.white, fontSize: 18),
@@ -415,6 +431,63 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               _buildSocialMediaButton('assets/icon_facebook.png', () {}),
               const SizedBox(width: 25),
               _buildSocialMediaButton('assets/icon_google.png', () {})
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSignUp(BuildContext context, AppLocalizations appLocalizations) {
+    return Container(
+      padding: EdgeInsets.only(top: 23.0),
+      child: Column(
+        children: [
+          Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              Card(
+                elevation: 2.0,
+                color: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                child: Container(
+                  width: 300.0,
+                  height: 360.0,
+                  child: Column(
+                    children: [
+                      CustomTextField(
+                          controller: _registerNameController,
+                          focusNode: _registerNameFocusNode,
+                          hintText: appLocalizations.translate('name_and_surname'),
+                          type: TextFieldType.NAME_AND_SURNAME,
+                          onFieldSubmitted: focusRegisterEmailTextField),
+                      _buildDivider(),
+                      CustomTextField(
+                          controller: _registerEmailController,
+                          focusNode: _registerEmailFocusNode,
+                          hintText: appLocalizations.translate('email_address'),
+                          type: TextFieldType.EMAIL,
+                          onFieldSubmitted: focusRegisterPasswordTextField),
+                      _buildDivider(),
+                      CustomTextField(
+                          controller: _registerPasswordController,
+                          focusNode: _registerPasswordFocusNode,
+                          hintText: appLocalizations.translate('password'),
+                          type: TextFieldType.PASSWORD,
+                          onFieldSubmitted: focusRegisterRepeatPasswordTextField),
+                      _buildDivider(),
+                      CustomTextField(
+                          controller: _registerRepeatPasswordController,
+                          focusNode: _registerRepeatPasswordFocusNode,
+                          hintText: appLocalizations.translate('repeat_password'),
+                          type: TextFieldType.PASSWORD,
+                          onFieldSubmitted: unFocusRegisterRepeatPasswordTextField,
+                          isRepeatingPassword: true),
+                    ],
+                  ),
+                ),
+              ),
+              _buildConfirmButton(context, 'sign_up', isLoginButton: false, margin: 340),
             ],
           ),
         ],
@@ -435,63 +508,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   Widget _buildDivider() {
     return Container(width: 250.0, height: 1.0, color: Colors.grey[400]);
-  }
-
-  Widget _buildSignUp(BuildContext context, AppLocalizations appLocalizations) {
-    return Container(
-      padding: EdgeInsets.only(top: 23.0),
-      child: Column(
-        children: [
-          Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              Card(
-                elevation: 2.0,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                child: Container(
-                  width: 300.0,
-                  height: 360.0,
-                  child: Column(
-                    children: [
-                      _buildTextField(
-                          _signUpNameController,
-                          _registerNameFocusNode,
-                          appLocalizations.translate('name_and_surname'),
-                          TextFieldType.NAME_AND_SURNAME,
-                          focusRegisterEmailTextField),
-                      _buildDivider(),
-                      _buildTextField(
-                          _signUpEmailController,
-                          _registerEmailFocusNode,
-                          appLocalizations.translate('email_address'),
-                          TextFieldType.EMAIL,
-                          focusRegisterPasswordTextField),
-                      _buildDivider(),
-                      _buildTextField(
-                          _signUpPasswordController,
-                          _registerPasswordFocusNode,
-                          appLocalizations.translate('password'),
-                          TextFieldType.PASSWORD,
-                          focusRegisterRepeatPasswordTextField),
-                      _buildDivider(),
-                      _buildTextField(
-                          _signUpConfirmPasswordController,
-                          _registerRepeatPasswordFocusNode,
-                          appLocalizations.translate('repeat_password'),
-                          TextFieldType.PASSWORD,
-                          unFocusRegisterRepeatPasswordTextField,
-                          isRepeatingPassword: true),
-                    ],
-                  ),
-                ),
-              ),
-              _buildConfirmButton(context, 'sign_up', isLoginButton: false, margin: 340),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildContent(BuildContext context, AppLocalizations appLocalizations) {

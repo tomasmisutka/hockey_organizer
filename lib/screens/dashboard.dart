@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:hockey_organizer/services/authentication.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class Dashboard extends StatelessWidget {
   final User firebaseUser;
 
-  HomeScreen(this.firebaseUser);
+  Dashboard(this.firebaseUser);
 
   @override
   Widget build(BuildContext context) {
