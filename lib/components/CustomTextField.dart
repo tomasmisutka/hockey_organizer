@@ -38,7 +38,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
     if (widget.type == TextFieldType.PASSWORD) {
       return IconButton(
           splashColor: Colors.transparent,
-          icon: Icon(_isObscureText ? Icons.remove_red_eye_outlined : Icons.remove_red_eye),
+          icon:
+              Icon(_isObscureText ? Icons.remove_red_eye_outlined : Icons.visibility_off_outlined),
           color: Colors.black,
           iconSize: 25,
           onPressed: () {
