@@ -24,5 +24,6 @@
   "invalid_email_address": "Neplatná emailová adresa",
   "passwords_not_same": "Heslá sa nezhodujú",
   "back": "Späť",
-  "no_internet_connection": "Nemáte prístup na Internet"
+  "no_internet_connection": "Nemáte prístup na Internet",
+  "reset_password_mail": "Zmena hesla bola zaslaná na váš email"
 }

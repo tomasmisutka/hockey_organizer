@@ -101,7 +101,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           if (await validInternetConnection(appLocalizations) == false) return;
           if (validEmailAddress(email.toLowerCase(), appLocalizations) == false) return;
           await context.read<AuthenticationService>().sendResetPasswordEmail(email);
-          Navigator.of(context).pop();
+          showInSnackBar(appLocalizations.translate('reset_password_mail'));
+          emailController.clear();
         },
       ),
     );
