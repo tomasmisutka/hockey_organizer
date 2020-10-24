@@ -26,7 +26,7 @@ class HockeyOrganizer extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Hockey Organizer',
-        theme: ThemeData(fontFamily: 'AnonymousPro'),
+        theme: ThemeData(fontFamily: 'IMBPlexSans'),
         debugShowCheckedModeBanner: false,
         supportedLocales: AppLocalizations.supportedLocales(),
         localizationsDelegates: AppLocalizations.localizationsDelegates(),

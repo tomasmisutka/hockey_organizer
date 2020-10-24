@@ -61,5 +61,9 @@ flutter:
         - asset: fonts/AnonymousPro-Bold.ttf
           weight: 900
 
+    - family: IMBPlexSans
+      fonts:
+        - asset: fonts/IBMPlexSans-SemiBold.ttf
+
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
