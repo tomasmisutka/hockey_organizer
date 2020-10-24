@@ -145,6 +145,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     }
   }
 
+  void onPressGoogleIcon() async {
+    await context.read<AuthenticationService>().signInByGoogle();
+  }
+
   bool validEmailAddress(String emailAddress, AppLocalizations appLocalizations) {
     if (emailAddress.isEmpty == true) {
       setState(() {
@@ -428,9 +432,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildSocialMediaButton('assets/icon_facebook.png', () {}),
+              _buildSocialMediaButton('assets/icon_google.png', onPressGoogleIcon),
               const SizedBox(width: 25),
-              _buildSocialMediaButton('assets/icon_google.png', () {})
+              _buildSocialMediaButton('assets/icon_facebook.png', () {}),
             ],
           ),
         ],

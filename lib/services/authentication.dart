@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hockey_organizer/app_localization.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
-
-  AuthenticationService(this._firebaseAuth);
+  final GoogleSignIn _googleSignIn;
+  AuthenticationService(this._firebaseAuth, this._googleSignIn);
 
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
 
@@ -53,6 +54,27 @@ class AuthenticationService {
     }
   }
 
+  //google sign in
+  Future<String> signInByGoogle() async {
+    GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+
+    if (googleSignInAccount != null) {
+      try {
+        GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+
+        AuthCredential credential = GoogleAuthProvider.credential(
+            idToken: googleSignInAuthentication.idToken,
+            accessToken: googleSignInAuthentication.accessToken);
+
+        await _firebaseAuth.signInWithCredential(credential);
+      } catch (error) {
+        return error.message;
+      }
+    }
+    return '';
+  }
+
   //reset password
   Future<void> sendResetPasswordEmail(String email) async {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
@@ -60,6 +82,9 @@ class AuthenticationService {
 
   //sign out
   Future<void> signOut() async {
+    if (_firebaseAuth.currentUser.providerData[0].providerId == 'google.com') {
+      await _googleSignIn.signOut();
+    }
     await _firebaseAuth.signOut();
   }
 
