@@ -45,8 +45,8 @@ class _Splash extends StatelessWidget {
     return Scaffold(
       body: SplashScreenView(
         home: AuthenticationWrapper(),
-        duration: 4000,
-        imageSize: 300,
+        duration: 2000,
+        imageSize: 280,
         imageSrc: "assets/hockey.png",
         text: 'Hockey\n    Organizer',
         textType: TextType.NormalText,

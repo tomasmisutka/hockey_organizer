@@ -148,7 +148,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         textAlign: TextAlign.center,
         style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
       ),
-      padding: EdgeInsets.symmetric(vertical: 10),
+      padding: EdgeInsets.all(10),
       shape: RoundedRectangleBorder(
           borderRadius:
               BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),

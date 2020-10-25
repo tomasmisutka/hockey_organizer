@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/contants.dart';
-import 'package:hockey_organizer/services/authentication.dart';
-import 'package:provider/provider.dart';
 
 class VerificationScreen extends StatelessWidget {
   Widget _buildVerificationDescription(BuildContext context) {
@@ -11,36 +9,28 @@ class VerificationScreen extends StatelessWidget {
 
     AppLocalizations appLocalizations = AppLocalizations.of(context);
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 75),
-          Image(width: 250.0, height: 191.0, image: AssetImage('assets/hockey.png')),
-          const SizedBox(height: 20),
-          Container(
-            width: 300,
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(appLocalizations.translate('verification_screen_description'),
-                    style: _textStyle),
-                const SizedBox(height: 15),
-                Text(appLocalizations.translate('best_regards'),
-                    style: _textStyle, textAlign: TextAlign.center),
-              ],
-            ),
+    return Column(
+      children: [
+        const SizedBox(height: 75),
+        Image(width: 250.0, height: 191.0, image: AssetImage('assets/hockey.png')),
+        const SizedBox(height: 20),
+        Container(
+          width: 300,
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(appLocalizations.translate('verification_screen_description'),
+                  style: _textStyle),
+              const SizedBox(height: 15),
+              Text(appLocalizations.translate('best_regards'),
+                  style: _textStyle, textAlign: TextAlign.center),
+            ],
           ),
-          const SizedBox(height: 25),
-          RaisedButton(
-            onPressed: () => context.read<AuthenticationService>().signOut(),
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: Text('Sign out'),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

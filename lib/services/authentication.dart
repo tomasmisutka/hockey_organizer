@@ -80,6 +80,11 @@ class AuthenticationService {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
+  //reload user information
+  Future<void> reloadUserInformation() async {
+    await _firebaseAuth.currentUser.reload();
+  }
+
   //sign out
   Future<void> signOut() async {
     if (_firebaseAuth.currentUser.providerData[0].providerId == 'google.com') {

@@ -11,7 +11,6 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
 
 import '../app_localization.dart';
-import '../authentication_wrapper.dart';
 import '../contants.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -59,21 +58,30 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   @override
   void initState() {
+    _pageController = PageController();
     super.initState();
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-
-    _pageController = PageController();
   }
 
   @override
   void dispose() {
-    _registerPasswordFocusNode.dispose();
-    _registerEmailFocusNode.dispose();
+    _loginEmailController.dispose();
+    _loginPasswordController.dispose();
+    _registerNameController.dispose();
+    _registerEmailController.dispose();
+    _registerPasswordController.dispose();
+    _registerRepeatPasswordController.dispose();
+
+    _loginEmailFocusNode.dispose();
+    _loginPasswordFocusNode.dispose();
     _registerNameFocusNode.dispose();
+    _registerEmailFocusNode.dispose();
+    _registerPasswordFocusNode.dispose();
+    _registerRepeatPasswordFocusNode.dispose();
     _pageController?.dispose();
     super.dispose();
   }
@@ -108,8 +116,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     });
     if (_errorText != '') {
       showInSnackBar(_errorText);
-    } else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => AuthenticationWrapper()));
     }
   }
 
@@ -129,10 +135,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         .signUp(
           context,
           displayName: _registerNameController.text.trim(),
-          email: _registerEmailController.text.trim().toLowerCase(),
+          email: emailAddress.toLowerCase(),
           password: _registerPasswordController.text.trim(),
         )
         .then((error) {
+      if (!mounted) return;
       setState(() {
         _errorText = error;
         isLoading = false;
@@ -140,8 +147,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     });
     if (_errorText != '') {
       showInSnackBar(_errorText);
-    } else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => AuthenticationWrapper()));
     }
   }
 
@@ -244,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         textAlign: TextAlign.center,
         style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
       ),
-      padding: EdgeInsets.symmetric(vertical: 10),
+      padding: EdgeInsets.all(10),
       shape: RoundedRectangleBorder(
           borderRadius:
               BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
@@ -294,43 +299,36 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
+  Widget _buildOrTextDivider(bool isOnLeftSide) {
+    List<Color> leftDividerColors = [Colors.white10, Colors.white];
+    List<Color> rightDividerColors = [Colors.white, Colors.white10];
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            colors: isOnLeftSide ? leftDividerColors : rightDividerColors,
+            begin: const FractionalOffset(0.0, 0.0),
+            end: const FractionalOffset(1.0, 1.0),
+            stops: [0.0, 1.0],
+            tileMode: TileMode.clamp),
+      ),
+      width: 110,
+      height: 1.0,
+    );
+  }
+
   Widget _buildOrTextWithDividers(AppLocalizations appLocalizations) {
     return Padding(
       padding: EdgeInsets.only(top: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Colors.white10, Colors.white],
-                  begin: const FractionalOffset(0.0, 0.0),
-                  end: const FractionalOffset(1.0, 1.0),
-                  stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp),
-            ),
-            width: 100.0,
-            height: 1.0,
-          ),
+        children: [
+          _buildOrTextDivider(true),
           Padding(
-            padding: EdgeInsets.only(left: 15.0, right: 15.0),
-            child: Text(
-              appLocalizations.translate('or'),
-              style: TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: "WorkSansMedium"),
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: Text(appLocalizations.translate('or'),
+                style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Colors.white, Colors.white10],
-                  begin: const FractionalOffset(0.0, 0.0),
-                  end: const FractionalOffset(1.0, 1.0),
-                  stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp),
-            ),
-            width: 100.0,
-            height: 1.0,
-          ),
+          _buildOrTextDivider(false),
         ],
       ),
     );
@@ -382,7 +380,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildSignIn(BuildContext context, AppLocalizations appLocalizations) {
+  Widget _buildSignInContent(BuildContext context, AppLocalizations appLocalizations) {
     return Container(
       padding: EdgeInsets.only(top: 23.0),
       child: Column(
@@ -434,9 +432,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildSocialMediaButton('assets/icon_google.png', onPressGoogleIcon),
-              const SizedBox(width: 25),
-              _buildSocialMediaButton('assets/icon_facebook.png', (appLocalizations) {}),
+              _buildSocialMediaButton(
+                  appLocalizations, 'assets/icon_google.png', onPressGoogleIcon),
+              const SizedBox(width: 40),
+              _buildSocialMediaButton(
+                  appLocalizations, 'assets/icon_facebook.png', (appLocalizations) {}),
             ],
           ),
         ],
@@ -444,7 +444,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildSignUp(BuildContext context, AppLocalizations appLocalizations) {
+  Widget _buildSignUpContent(BuildContext context, AppLocalizations appLocalizations) {
     return Container(
       padding: EdgeInsets.only(top: 23.0),
       child: Column(
@@ -501,9 +501,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildSocialMediaButton(String imagePath, Function(AppLocalizations) onTap) {
+  Widget _buildSocialMediaButton(
+      AppLocalizations appLocalizations, String imagePath, Function(AppLocalizations) onTap) {
     return GestureDetector(
-      onTap: () => onTap,
+      onTap: () => onTap(appLocalizations),
       child: Container(
           margin: EdgeInsets.only(top: 10),
           padding: const EdgeInsets.all(15.0),
@@ -568,10 +569,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       children: [
                         ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
-                            child: _buildSignIn(context, appLocalizations)),
+                            child: _buildSignInContent(context, appLocalizations)),
                         ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
-                            child: _buildSignUp(context, appLocalizations)),
+                            child: _buildSignUpContent(context, appLocalizations)),
                       ],
                     ),
                   ),
