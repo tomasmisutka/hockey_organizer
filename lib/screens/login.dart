@@ -145,7 +145,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     }
   }
 
-  void onPressGoogleIcon() async {
+  void onPressGoogleIcon(AppLocalizations appLocalizations) async {
+    if (await validInternetConnection(appLocalizations) == false) return;
     await context.read<AuthenticationService>().signInByGoogle();
   }
 
@@ -241,12 +242,13 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       content: Text(
         description,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.black, fontSize: 20),
+        style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
       ),
+      padding: EdgeInsets.symmetric(vertical: 10),
       shape: RoundedRectangleBorder(
           borderRadius:
-              BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))),
-      backgroundColor: Colors.amber,
+              BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+      backgroundColor: Color(0xfff32013),
       duration: Duration(seconds: 3),
     ));
   }
@@ -434,7 +436,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             children: [
               _buildSocialMediaButton('assets/icon_google.png', onPressGoogleIcon),
               const SizedBox(width: 25),
-              _buildSocialMediaButton('assets/icon_facebook.png', () {}),
+              _buildSocialMediaButton('assets/icon_facebook.png', (appLocalizations) {}),
             ],
           ),
         ],
@@ -499,9 +501,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildSocialMediaButton(String imagePath, Function onTap) {
+  Widget _buildSocialMediaButton(String imagePath, Function(AppLocalizations) onTap) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => onTap,
       child: Container(
           margin: EdgeInsets.only(top: 10),
           padding: const EdgeInsets.all(15.0),

@@ -146,12 +146,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       content: Text(
         description,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.black, fontSize: 20),
+        style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
       ),
-      backgroundColor: Colors.amber,
+      padding: EdgeInsets.symmetric(vertical: 10),
       shape: RoundedRectangleBorder(
           borderRadius:
-              BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+              BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+      backgroundColor: Color(0xfff32013),
       duration: Duration(seconds: 3),
     ));
   }
