@@ -1,10 +1,10 @@
 {
-  "sign_in": "Prihlásiť sa",
+  "sign_in": "Prihlásiť",
   "email_address": "Emailová adresa",
   "password": "Heslo",
   "repeat_password": "Zopakujte heslo",
   "have_not_account": "Nemáte účet?",
-  "sign_up": "Registrovať sa",
+  "sign_up": "Registrovať",
   "registration": "Registrácia",
   "account_does_not_exists": "Tento účet neexistuje",
   "wrong_password": "Zadali ste nesprávne heslo",

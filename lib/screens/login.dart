@@ -152,7 +152,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   void onPressGoogleIcon(AppLocalizations appLocalizations) async {
     if (await validInternetConnection(appLocalizations) == false) return;
-    await context.read<AuthenticationService>().signInByGoogle();
+    await context.read<AuthenticationService>().signInWithGoogle();
+  }
+
+  void onPressFacebookIcon(AppLocalizations appLocalizations) async {
+    if (await validInternetConnection(appLocalizations) == false) return;
+    await context.read<AuthenticationService>().signInWithFacebook();
   }
 
   bool validEmailAddress(String emailAddress, AppLocalizations appLocalizations) {
@@ -436,7 +441,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   appLocalizations, 'assets/icon_google.png', onPressGoogleIcon),
               const SizedBox(width: 40),
               _buildSocialMediaButton(
-                  appLocalizations, 'assets/icon_facebook.png', (appLocalizations) {}),
+                  appLocalizations, 'assets/icon_facebook.png', onPressFacebookIcon),
             ],
           ),
         ],

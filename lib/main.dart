@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/services/authentication.dart';
@@ -17,12 +18,13 @@ Future<void> main() async {
 
 class HockeyOrganizer extends StatelessWidget {
   final googleSignIn = GoogleSignIn();
+  final facebookLogin = FacebookLogin();
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         Provider<AuthenticationService>(
-          create: (_) => AuthenticationService(FirebaseAuth.instance, googleSignIn),
+          create: (_) => AuthenticationService(FirebaseAuth.instance, googleSignIn, facebookLogin),
         ),
         StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),
       ],

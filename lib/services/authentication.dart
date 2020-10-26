@@ -2,13 +2,16 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hockey_organizer/app_localization.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
-  AuthenticationService(this._firebaseAuth, this._googleSignIn);
+  final FacebookLogin _facebookLogin;
+
+  AuthenticationService(this._firebaseAuth, this._googleSignIn, this._facebookLogin);
 
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
 
@@ -55,7 +58,7 @@ class AuthenticationService {
   }
 
   //google sign in
-  Future<String> signInByGoogle() async {
+  Future<String> signInWithGoogle() async {
     GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
 
     if (googleSignInAccount != null) {
@@ -63,11 +66,11 @@ class AuthenticationService {
         GoogleSignInAuthentication googleSignInAuthentication =
             await googleSignInAccount.authentication;
 
-        AuthCredential credential = GoogleAuthProvider.credential(
+        AuthCredential googleCredential = GoogleAuthProvider.credential(
             idToken: googleSignInAuthentication.idToken,
             accessToken: googleSignInAuthentication.accessToken);
 
-        await _firebaseAuth.signInWithCredential(credential);
+        await _firebaseAuth.signInWithCredential(googleCredential);
       } catch (error) {
         return error.message;
       }
@@ -75,25 +78,41 @@ class AuthenticationService {
     return '';
   }
 
-  //reset password
-  Future<void> sendResetPasswordEmail(String email) async {
-    await _firebaseAuth.sendPasswordResetEmail(email: email);
+  //facebook sign in
+  Future<String> signInWithFacebook() async {
+    final loginResult = await _facebookLogin.logIn(['email', 'public_profile']);
+
+    switch (loginResult.status) {
+      case FacebookLoginStatus.loggedIn:
+        final FacebookAuthCredential facebookAuthCredential =
+            FacebookAuthProvider.credential(loginResult.accessToken.token);
+        await _firebaseAuth.signInWithCredential(facebookAuthCredential);
+        return '';
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        break;
+      case FacebookLoginStatus.error:
+        print('any error occurred');
+        break;
+    }
+    return '';
   }
 
-  //reload user information
-  Future<void> reloadUserInformation() async {
-    await _firebaseAuth.currentUser.reload();
-  }
+  //reset password
+  Future<void> sendResetPasswordEmail(String email) async =>
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
 
   //sign out
   Future<void> signOut() async {
     if (_firebaseAuth.currentUser.providerData[0].providerId == 'google.com') {
       await _googleSignIn.signOut();
     }
+    if (_firebaseAuth.currentUser.providerData[0].providerId == 'facebook.com') {
+      await _facebookLogin.logOut();
+    }
     await _firebaseAuth.signOut();
   }
 
-  Future<void> checkIfUsersEmailIsVerified() async {
-    await _firebaseAuth.currentUser.reload();
-  }
+  //reload user
+  Future<void> checkIfUsersEmailIsVerified() async => await _firebaseAuth.currentUser.reload();
 }

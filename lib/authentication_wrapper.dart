@@ -7,20 +7,17 @@ import 'package:provider/provider.dart';
 import 'screens/dashboard.dart';
 
 class AuthenticationWrapper extends StatelessWidget {
-  Future<void> reloadUserInformation(User firebaseUser) async {
-    await firebaseUser.reload();
-  }
-
   @override
   Widget build(BuildContext context) {
     final firebaseUser = context.watch<User>();
     if (firebaseUser == null) {
       return LoginScreen();
     }
-    reloadUserInformation(firebaseUser);
-    if (firebaseUser.emailVerified == false) {
-      return VerificationScreen();
+    firebaseUser.reload();
+    if (firebaseUser.providerData[0].providerId == 'facebook.com' ||
+        firebaseUser.emailVerified == true) {
+      return Dashboard(firebaseUser);
     }
-    return Dashboard(firebaseUser);
+    return VerificationScreen();
   }
 }
