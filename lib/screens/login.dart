@@ -56,6 +56,18 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     _registerRepeatPasswordFocusNode.unfocus();
   }
 
+  void startLoading() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+
+  void stopLoading() {
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   void initState() {
     _pageController = PageController();
@@ -98,9 +110,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     String email = _loginEmailController.text.trim();
     if (await validInternetConnection(appLocalizations) == false) return;
     if (validEmailAddress(email.toLowerCase(), appLocalizations) == false) return;
-    setState(() {
-      isLoading = true;
-    });
+    startLoading();
     await context
         .read<AuthenticationService>()
         .signIn(
@@ -111,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         .then((error) {
       setState(() {
         _errorText = error;
-        isLoading = false;
+        stopLoading();
       });
     });
     if (_errorText != '') {
@@ -126,10 +136,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     if (validEmailAddress(emailAddress.toLowerCase(), appLocalizations) == false) return;
     if (validPassword(appLocalizations) == false) return;
     if (validRepeatPassword(appLocalizations) == false) return;
+    startLoading();
 
-    setState(() {
-      isLoading = true;
-    });
     await context
         .read<AuthenticationService>()
         .signUp(
@@ -142,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       if (!mounted) return;
       setState(() {
         _errorText = error;
-        isLoading = false;
+        stopLoading();
       });
     });
     if (_errorText != '') {
@@ -152,12 +160,16 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   void onPressGoogleIcon(AppLocalizations appLocalizations) async {
     if (await validInternetConnection(appLocalizations) == false) return;
+    startLoading();
     await context.read<AuthenticationService>().signInWithGoogle();
+    stopLoading();
   }
 
   void onPressFacebookIcon(AppLocalizations appLocalizations) async {
     if (await validInternetConnection(appLocalizations) == false) return;
+    startLoading();
     await context.read<AuthenticationService>().signInWithFacebook();
+    stopLoading();
   }
 
   bool validEmailAddress(String emailAddress, AppLocalizations appLocalizations) {
