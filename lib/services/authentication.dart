@@ -103,12 +103,13 @@ class AuthenticationService {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
 
   //sign out
-  Future<void> signOut() async {
+  Future<void> signOut(User firebaseUser) async {
     if (_firebaseAuth.currentUser.providerData[0].providerId == 'google.com') {
       await _googleSignIn.signOut();
     }
     if (_firebaseAuth.currentUser.providerData[0].providerId == 'facebook.com') {
       await _facebookLogin.logOut();
+      firebaseUser = null;
     }
     await _firebaseAuth.signOut();
   }

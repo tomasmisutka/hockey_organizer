@@ -162,6 +162,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     if (await validInternetConnection(appLocalizations) == false) return;
     startLoading();
     await context.read<AuthenticationService>().signInWithGoogle();
+    if (!mounted) return;
     stopLoading();
   }
 
@@ -169,6 +170,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     if (await validInternetConnection(appLocalizations) == false) return;
     startLoading();
     await context.read<AuthenticationService>().signInWithFacebook();
+    if (!mounted) return;
     stopLoading();
   }
 
@@ -421,7 +423,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         type: TextFieldType.EMAIL,
                         onFieldSubmitted: focusLoginPasswordTextField,
                       ),
-                      _buildDivider(),
+                      _buildTextFieldDivider(),
                       CustomTextField(
                         controller: _loginPasswordController,
                         focusNode: _loginPasswordFocusNode,
@@ -484,21 +486,21 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           hintText: appLocalizations.translate('name_and_surname'),
                           type: TextFieldType.NAME_AND_SURNAME,
                           onFieldSubmitted: focusRegisterEmailTextField),
-                      _buildDivider(),
+                      _buildTextFieldDivider(),
                       CustomTextField(
                           controller: _registerEmailController,
                           focusNode: _registerEmailFocusNode,
                           hintText: appLocalizations.translate('email_address'),
                           type: TextFieldType.EMAIL,
                           onFieldSubmitted: focusRegisterPasswordTextField),
-                      _buildDivider(),
+                      _buildTextFieldDivider(),
                       CustomTextField(
                           controller: _registerPasswordController,
                           focusNode: _registerPasswordFocusNode,
                           hintText: appLocalizations.translate('password'),
                           type: TextFieldType.PASSWORD,
                           onFieldSubmitted: focusRegisterRepeatPasswordTextField),
-                      _buildDivider(),
+                      _buildTextFieldDivider(),
                       CustomTextField(
                           controller: _registerRepeatPasswordController,
                           focusNode: _registerRepeatPasswordFocusNode,
@@ -530,7 +532,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildTextFieldDivider() {
     return Container(width: 250.0, height: 1.0, color: Colors.grey[400]);
   }
 
@@ -539,65 +541,60 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       key: _scaffoldKey,
       body: ModalProgressHUD(
         inAsyncCall: isLoading,
-        progressIndicator: SpinKitCubeGrid(size: 55, color: Colors.black87),
-        child: NotificationListener<OverscrollIndicatorNotification>(
-          onNotification: (overscroll) {
-            overscroll.disallowGlow();
-            return true;
-          },
-          child: SingleChildScrollView(
-              child: GestureDetector(
-            onTap: unFocusAllNodes,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height >= 775.0
-                  ? MediaQuery.of(context).size.height
-                  : 775.0,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [Constants.START_GRADIENT_COLOR, Constants.END_GRADIENT_COLOR],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0, 1.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp),
-              ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 75),
-                  Image(width: 250.0, height: 191.0, image: AssetImage('assets/hockey.png')),
-                  _buildMenuBar(context, appLocalizations),
-                  Expanded(
-                    flex: 2,
-                    child: PageView(
-                      controller: _pageController,
-                      onPageChanged: (i) {
-                        if (i == 0) {
-                          setState(() {
-                            rightTabColor = Colors.white;
-                            leftTabColor = Colors.black;
-                          });
-                        } else if (i == 1) {
-                          setState(() {
-                            rightTabColor = Colors.black;
-                            leftTabColor = Colors.white;
-                          });
-                        }
-                      },
-                      children: [
-                        ConstrainedBox(
-                            constraints: const BoxConstraints.expand(),
-                            child: _buildSignInContent(context, appLocalizations)),
-                        ConstrainedBox(
-                            constraints: const BoxConstraints.expand(),
-                            child: _buildSignUpContent(context, appLocalizations)),
-                      ],
+        progressIndicator: SpinKitThreeBounce(size: 55, color: Colors.black),
+        child: SingleChildScrollView(
+            physics: ClampingScrollPhysics(),
+            child: GestureDetector(
+              onTap: unFocusAllNodes,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height >= 775.0
+                    ? MediaQuery.of(context).size.height
+                    : 775.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [Constants.START_GRADIENT_COLOR, Constants.END_GRADIENT_COLOR],
+                      begin: const FractionalOffset(0.0, 0.0),
+                      end: const FractionalOffset(1.0, 1.0),
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp),
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 75),
+                    Image(width: 250.0, height: 191.0, image: AssetImage('assets/hockey.png')),
+                    _buildMenuBar(context, appLocalizations),
+                    Expanded(
+                      flex: 2,
+                      child: PageView(
+                        controller: _pageController,
+                        onPageChanged: (i) {
+                          if (i == 0) {
+                            setState(() {
+                              rightTabColor = Colors.white;
+                              leftTabColor = Colors.black;
+                            });
+                          } else if (i == 1) {
+                            setState(() {
+                              rightTabColor = Colors.black;
+                              leftTabColor = Colors.white;
+                            });
+                          }
+                        },
+                        children: [
+                          ConstrainedBox(
+                              constraints: const BoxConstraints.expand(),
+                              child: _buildSignInContent(context, appLocalizations)),
+                          ConstrainedBox(
+                              constraints: const BoxConstraints.expand(),
+                              child: _buildSignUpContent(context, appLocalizations)),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          )),
-        ),
+            )),
       ),
     );
   }

@@ -25,9 +25,7 @@ class Dashboard extends StatelessWidget {
               RaisedButton(
                 color: Colors.white,
                 textColor: Colors.black,
-                onPressed: () {
-                  context.read<AuthenticationService>().signOut();
-                },
+                onPressed: () => context.read<AuthenticationService>().signOut(firebaseUser),
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Text('Sign out'),
               ),
