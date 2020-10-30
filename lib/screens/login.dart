@@ -2,6 +2,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hockey_organizer/components/CustomTextField.dart';
 import 'package:hockey_organizer/screens/reset_password.dart';
@@ -9,6 +10,7 @@ import 'package:hockey_organizer/services/authentication.dart';
 import 'package:hockey_organizer/utils/buble_indicator_painter.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 import '../app_localization.dart';
 import '../contants.dart';
@@ -119,6 +121,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           password: _loginPasswordController.text.trim(),
         )
         .then((error) {
+      if (!mounted) return;
       setState(() {
         _errorText = error;
         stopLoading();
@@ -166,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     stopLoading();
   }
 
-  void onPressFacebookIcon(AppLocalizations appLocalizations) async {
+  void onPressFacebookButton(AppLocalizations appLocalizations) async {
     if (await validInternetConnection(appLocalizations) == false) return;
     startLoading();
     await context.read<AuthenticationService>().signInWithFacebook();
@@ -439,23 +442,29 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               _buildConfirmButton(context, 'login'),
             ],
           ),
-          _buildOrTextWithDividers(appLocalizations),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           FlatButton(
-              onPressed: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => ResetPasswordScreen())),
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => ThemeConsumer(child: ResetPasswordScreen()))),
               child: Text(
                 appLocalizations.translate('forgot_password'),
                 style: TextStyle(color: Colors.white, fontSize: 18),
               )),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          _buildOrTextWithDividers(appLocalizations),
+          const SizedBox(height: 15),
+          Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              _buildSocialMediaButton(
-                  appLocalizations, 'assets/icon_google.png', onPressGoogleIcon),
-              const SizedBox(width: 40),
-              _buildSocialMediaButton(
-                  appLocalizations, 'assets/icon_facebook.png', onPressFacebookIcon),
+              GoogleSignInButton(
+                onPressed: () => onPressGoogleIcon(appLocalizations),
+                darkMode: true,
+                text: appLocalizations.translate('continue_with_google'),
+              ),
+              const SizedBox(height: 20),
+              FacebookSignInButton(
+                onPressed: () => onPressFacebookButton(appLocalizations),
+                text: appLocalizations.translate('continue_with_facebook'),
+              )
             ],
           ),
         ],
@@ -520,18 +529,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildSocialMediaButton(
-      AppLocalizations appLocalizations, String imagePath, Function(AppLocalizations) onTap) {
-    return GestureDetector(
-      onTap: () => onTap(appLocalizations),
-      child: Container(
-          margin: EdgeInsets.only(top: 10),
-          padding: const EdgeInsets.all(15.0),
-          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-          child: Image.asset(imagePath, width: 40, height: 40)),
-    );
-  }
-
   Widget _buildTextFieldDivider() {
     return Container(width: 250.0, height: 1.0, color: Colors.grey[400]);
   }
@@ -550,7 +547,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height >= 775.0
                     ? MediaQuery.of(context).size.height
-                    : 775.0,
+                    : 810.0,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                       colors: [Constants.START_GRADIENT_COLOR, Constants.END_GRADIENT_COLOR],

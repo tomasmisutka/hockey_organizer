@@ -7,6 +7,7 @@ import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/services/authentication.dart';
 import 'package:provider/provider.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 import 'authentication_wrapper.dart';
 
@@ -28,14 +29,24 @@ class HockeyOrganizer extends StatelessWidget {
         ),
         StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),
       ],
-      child: MaterialApp(
-        title: 'Hockey Organizer',
-        theme: ThemeData(fontFamily: 'IMBPlexSans'),
-        debugShowCheckedModeBanner: false,
-        supportedLocales: AppLocalizations.supportedLocales(),
-        localizationsDelegates: AppLocalizations.localizationsDelegates(),
-        localeResolutionCallback: AppLocalizations.localeResolutionCallback,
-        home: _Splash(),
+      child: ThemeProvider(
+        saveThemesOnChange: true,
+        loadThemeOnInit: true,
+        themes: [AppTheme.light(), AppTheme.dark()],
+        child: ThemeConsumer(
+          child: Builder(
+            builder: (themeContext) => MaterialApp(
+              title: 'Hockey Organizer',
+              // theme: ThemeData(fontFamily: 'IMBPlexSans'),
+              theme: ThemeProvider.themeOf(themeContext).data,
+              debugShowCheckedModeBanner: false,
+              supportedLocales: AppLocalizations.supportedLocales(),
+              localizationsDelegates: AppLocalizations.localizationsDelegates(),
+              localeResolutionCallback: AppLocalizations.localeResolutionCallback,
+              home: _Splash(),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -50,7 +61,7 @@ class _Splash extends StatelessWidget {
         duration: 2000,
         imageSize: 280,
         imageSrc: "assets/hockey.png",
-        text: 'Hockey\n            Organizer',
+        text: 'Hockey\n  Organizer',
         textType: TextType.NormalText,
         textStyle: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, height: 1.5),
       ),

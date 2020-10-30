@@ -6,7 +6,6 @@
   "email_address": "Email address",
   "password": "Password",
   "repeat_password": "Repeat password",
-  "have_not_account": "No account?",
   "account_does_not_exists": "This account does not exists",
   "wrong_password": "Wrong password",
   "weak_password": "The password is too weak",
@@ -24,5 +23,9 @@
   "passwords_not_same": "Passwords does not match",
   "back": "Back",
   "no_internet_connection": "No Internet Connection",
-  "reset_password_mail": "Reset password has been sent to your email"
+  "reset_password_mail": "Reset password has been sent to your email",
+  "events": "Events",
+  "log_out": "Log out",
+  "continue_with_google": "Continue with Google",
+  "continue_with_facebook": "Continue with Facebook"
 }

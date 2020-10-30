@@ -78,7 +78,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           prefixIcon: _renderPrefixIcon(),
           suffixIcon: _renderSuffixIcon(),
           hintText: widget.hintText,
-          hintStyle: TextStyle(fontSize: 17),
+          hintStyle: TextStyle(fontSize: 17, color: Colors.black),
         ),
         cursorColor: Colors.black,
         onFieldSubmitted: widget.onFieldSubmitted,
