@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     _pageController?.animateToPage(1, duration: Duration(milliseconds: 300), curve: Curves.linear);
   }
 
-  void onPressSignInButton(BuildContext context, AppLocalizations appLocalizations) async {
+  void onPressLogInButton(BuildContext context, AppLocalizations appLocalizations) async {
     String email = _loginEmailController.text.trim();
     if (await validInternetConnection(appLocalizations) == false) return;
     if (validEmailAddress(email.toLowerCase(), appLocalizations) == false) return;
@@ -129,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     }
   }
 
-  void onPressSignUpButton(BuildContext context, AppLocalizations appLocalizations) async {
+  void onPressRegisterButton(BuildContext context, AppLocalizations appLocalizations) async {
     String emailAddress = _registerEmailController.text.trim();
     if (await validInternetConnection(appLocalizations) == false) return;
     if (validNameAndSurname(appLocalizations) == false) return;
@@ -298,7 +298,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 highlightColor: Colors.transparent,
                 onPressed: _onPressTabBarSignInButton,
                 child: Text(
-                  appLocalizations.translate('sign_in'),
+                  appLocalizations.translate('existing'),
                   style: _menuTextStyle.copyWith(color: leftTabColor),
                 ),
               ),
@@ -308,7 +308,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onPressed: _onPressTabBarSignUPButton,
-                child: Text(appLocalizations.translate('sign_up'),
+                child: Text(appLocalizations.translate('new'),
                     textAlign: TextAlign.center, style: _menuTextStyle),
               ),
             ),
@@ -391,9 +391,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           ),
           onPressed: () {
             if (isLoginButton == true) {
-              onPressSignInButton(context, appLocalizations);
+              onPressLogInButton(context, appLocalizations);
             } else {
-              onPressSignUpButton(context, appLocalizations);
+              onPressRegisterButton(context, appLocalizations);
             }
           }),
     );
@@ -436,7 +436,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                 ),
               ),
-              _buildConfirmButton(context, 'sign_in'),
+              _buildConfirmButton(context, 'login'),
             ],
           ),
           _buildOrTextWithDividers(appLocalizations),
@@ -512,7 +512,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                 ),
               ),
-              _buildConfirmButton(context, 'sign_up', isLoginButton: false, margin: 340),
+              _buildConfirmButton(context, 'register', isLoginButton: false, margin: 340),
             ],
           ),
         ],

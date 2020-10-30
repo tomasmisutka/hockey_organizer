@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hockey_organizer/app_localization.dart';
@@ -86,13 +87,39 @@ class AuthenticationService {
       case FacebookLoginStatus.loggedIn:
         final FacebookAuthCredential facebookAuthCredential =
             FacebookAuthProvider.credential(loginResult.accessToken.token);
-        await _firebaseAuth.signInWithCredential(facebookAuthCredential);
+        try {
+          await _firebaseAuth.signInWithCredential(facebookAuthCredential);
+        } on FirebaseAuthException catch (error) {
+          if (error.code == 'account-exists-with-different-credential') {
+            String email = error.email;
+            AuthCredential pendingCredential = error.credential;
+            List<String> userSignInMethods = await _firebaseAuth.fetchSignInMethodsForEmail(email);
+
+            if (userSignInMethods.first == 'google.com') {
+              //sign in with google to link that emails
+              GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+              GoogleSignInAuthentication googleSignInAuthentication =
+                  await googleSignInAccount.authentication;
+              GoogleAuthCredential googleAuthCredential = GoogleAuthProvider.credential(
+                accessToken: googleSignInAuthentication.accessToken,
+                idToken: googleSignInAuthentication.idToken,
+              );
+              // Sign the user in with the credential
+              UserCredential userCredential =
+                  await _firebaseAuth.signInWithCredential(googleAuthCredential);
+              // Link the pending credential with the existing account
+              await userCredential.user.linkWithCredential(pendingCredential);
+            } else {
+              print('can not link these providers');
+            }
+          }
+        }
+
         return '';
         break;
       case FacebookLoginStatus.cancelledByUser:
         break;
       case FacebookLoginStatus.error:
-        print('any error occurred');
         break;
     }
     return '';
@@ -103,13 +130,12 @@ class AuthenticationService {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
 
   //sign out
-  Future<void> signOut(User firebaseUser) async {
+  Future<void> signOut() async {
     if (_firebaseAuth.currentUser.providerData[0].providerId == 'google.com') {
       await _googleSignIn.signOut();
     }
     if (_firebaseAuth.currentUser.providerData[0].providerId == 'facebook.com') {
       await _facebookLogin.logOut();
-      firebaseUser = null;
     }
     await _firebaseAuth.signOut();
   }
