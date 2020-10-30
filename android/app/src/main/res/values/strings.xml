@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hockey Organizer</string>
+    <string name="facebook_app_id">264073511708252</string>
+    <string name="fb_login_protocol_scheme">fb264073511708252</string>
+</resources>

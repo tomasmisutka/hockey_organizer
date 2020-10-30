@@ -28,14 +28,19 @@ dependencies:
     sdk: flutter
 
   #dependancy packages
-  animated_splash_screen: ^1.0.1+2
+  splash_screen_view: ^1.0.3
   page_transition: ^1.1.7+2
-  passwordfield: ^0.0.82
   shimmer: ^1.1.2
   firebase_auth: ^0.18.1+2
   firebase_core: ^0.5.0+1
   cloud_firestore: ^0.14.1+3
+  google_sign_in: ^4.5.5
+  flutter_facebook_login: ^3.0.0
   provider: ^4.3.2+2
+  flutter_spinkit: ^4.1.2+1
+  email_validator: ^1.0.5
+  modal_progress_hud: ^0.1.3
+  connectivity: ^2.0.0
   cupertino_icons: ^1.0.0
 
 dev_dependencies:
@@ -50,11 +55,9 @@ flutter:
     - lang/
 
   fonts:
-    - family: AnonymousPro
+    - family: IMBPlexSans
       fonts:
-        - asset: fonts/AnonymousPro-Bold.ttf
-        - asset: fonts/AnonymousPro-Regular.ttf
-          weight: 400
+        - asset: fonts/IBMPlexSans-SemiBold.ttf
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
