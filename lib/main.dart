@@ -13,11 +13,14 @@ import 'authentication_wrapper.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(HockeyOrganizer());
+  FirebaseApp app = await Firebase.initializeApp();
+  runApp(HockeyOrganizer(app));
 }
 
 class HockeyOrganizer extends StatelessWidget {
+  final FirebaseApp firebaseApp;
+  HockeyOrganizer(this.firebaseApp);
+
   final googleSignIn = GoogleSignIn();
   final facebookLogin = FacebookLogin();
   @override
@@ -37,13 +40,12 @@ class HockeyOrganizer extends StatelessWidget {
           child: Builder(
             builder: (themeContext) => MaterialApp(
               title: 'Hockey Organizer',
-              // theme: ThemeData(fontFamily: 'IMBPlexSans'),
               theme: ThemeProvider.themeOf(themeContext).data,
               debugShowCheckedModeBanner: false,
               supportedLocales: AppLocalizations.supportedLocales(),
               localizationsDelegates: AppLocalizations.localizationsDelegates(),
               localeResolutionCallback: AppLocalizations.localeResolutionCallback,
-              home: _Splash(),
+              home: _Splash(firebaseApp),
             ),
           ),
         ),
@@ -53,11 +55,13 @@ class HockeyOrganizer extends StatelessWidget {
 }
 
 class _Splash extends StatelessWidget {
+  final FirebaseApp firebaseApp;
+  _Splash(this.firebaseApp);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SplashScreenView(
-        home: AuthenticationWrapper(),
+        home: AuthenticationWrapper(firebaseApp),
         duration: 2000,
         imageSize: 280,
         imageSrc: "assets/hockey.png",
