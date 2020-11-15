@@ -50,7 +50,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _buildChatDialogWindow() {
+  Widget _chatDialog() {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
       height: MediaQuery.of(context).size.height * 0.9,
@@ -65,14 +65,14 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  FloatingActionButton _buildFloatingActionButton() {
+  FloatingActionButton _floatingActionButtonUI() {
     return FloatingActionButton(
         onPressed: () => _scaffoldKey.currentState.openEndDrawer(),
         child: Icon(Icons.message),
         elevation: 10);
   }
 
-  AppBar _buildAppBar(BuildContext context, AppLocalizations appLocalizations,
+  AppBar _appBarUI(BuildContext context, AppLocalizations appLocalizations,
       DatabaseReference databaseReference) {
     return AppBar(
       title: Text(appLocalizations.translate('events')),
@@ -90,7 +90,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _buildContent(AppLocalizations appLocalizations) {
+  Widget _contentUI(AppLocalizations appLocalizations) {
     return SingleChildScrollView(
       child: FirebaseAnimatedList(
           shrinkWrap: true,
@@ -130,10 +130,10 @@ class _DashboardState extends State<Dashboard> {
     final AppLocalizations appLocalizations = AppLocalizations.of(context);
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: _buildChatDialogWindow(),
-      appBar: _buildAppBar(context, appLocalizations, hockeyEventsDatabase),
-      floatingActionButton: _buildFloatingActionButton(),
-      body: _buildContent(appLocalizations),
+      endDrawer: _chatDialog(),
+      appBar: _appBarUI(context, appLocalizations, hockeyEventsDatabase),
+      floatingActionButton: _floatingActionButtonUI(),
+      body: _contentUI(appLocalizations),
     );
   }
 }
