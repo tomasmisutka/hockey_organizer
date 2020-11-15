@@ -30,6 +30,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
   FocusNode _playersNode = FocusNode();
   FocusNode _groupNode = FocusNode();
   Map<String, dynamic> players;
+  bool _iceHockeyState = true;
+  bool _inlineHockeyState = false;
 
   User get firebaseUser {
     return widget.firebaseUser;
@@ -42,33 +44,31 @@ class _AddEventScreenState extends State<AddEventScreen> {
     super.initState();
   }
 
-  Widget _picker(AppLocalizations appLocalizations, Function(String) onChanged,
+  Widget picker(AppLocalizations appLocalizations, Function(String) onChanged,
       {bool isDatePicker = true}) {
-    return Container(
-      constraints: BoxConstraints(maxWidth: 130),
-      child: isDatePicker
-          ? DateTimePicker(
-              type: DateTimePickerType.date,
-              dateMask: 'dd.MM.yyyy',
-              calendarTitle: appLocalizations.translate('choose_date'),
-              cancelText: appLocalizations.translate('cancel'),
-              confirmText: appLocalizations.translate('confirm'),
-              icon: Icon(Icons.event),
-              firstDate: DateTime(DateTime.now().year),
-              lastDate: DateTime(DateTime.now().year + 5),
-              dateLabelText: appLocalizations.translate('date'),
-              initialValue: _date,
-              onChanged: isDatePicker ? onChanged : null,
-            )
-          : DateTimePicker(
-              type: DateTimePickerType.time,
-              icon: Icon(Icons.access_time),
-              calendarTitle: appLocalizations.translate('choose_time'),
-              timeLabelText: appLocalizations.translate('time'),
-              initialValue: _time,
-              onChanged: isDatePicker ? null : onChanged,
-            ),
-    );
+    Color iconColor = Colors.grey[300];
+    return isDatePicker
+        ? DateTimePicker(
+            type: DateTimePickerType.date,
+            dateMask: 'dd.MM.yyyy',
+            calendarTitle: appLocalizations.translate('choose_date'),
+            cancelText: appLocalizations.translate('cancel'),
+            confirmText: appLocalizations.translate('confirm'),
+            icon: Icon(Icons.event, color: iconColor),
+            firstDate: DateTime(DateTime.now().year),
+            lastDate: DateTime(DateTime.now().year + 5),
+            dateLabelText: appLocalizations.translate('date'),
+            initialValue: _date,
+            onChanged: isDatePicker ? onChanged : null,
+          )
+        : DateTimePicker(
+            type: DateTimePickerType.time,
+            icon: Icon(Icons.access_time, color: iconColor),
+            calendarTitle: appLocalizations.translate('choose_time'),
+            timeLabelText: appLocalizations.translate('time'),
+            initialValue: _time,
+            onChanged: isDatePicker ? null : onChanged,
+          );
   }
 
   void editDateFormat(String date) {
@@ -80,44 +80,26 @@ class _AddEventScreenState extends State<AddEventScreen> {
   }
 
   void onChangedDatePicker(newDate) => _date = newDate;
-
   void onChangedTimePicker(newTime) => _time = newTime;
 
-  Widget placeTextField(AppLocalizations appLocalizations) {
+  Widget addEventTextField(TextEditingController controller, FocusNode node, String labelText,
+      {IconData icon = Icons.description_outlined,
+      TextInputType textInputType = TextInputType.name}) {
     return Row(
       children: [
-        Icon(Icons.place_outlined, color: Colors.grey[600]),
+        Icon(icon, color: Colors.grey[300]),
         const SizedBox(width: 15),
-        Container(
-            constraints: BoxConstraints(maxWidth: 130),
-            child: TextField(
-              controller: _placeController,
-              focusNode: _placeNode,
-              decoration: InputDecoration(
-                hintText: appLocalizations.translate('choose_place'),
-                labelText: appLocalizations.translate('place'),
-              ),
-            )),
-      ],
-    );
-  }
-
-  Widget playersTextField(AppLocalizations appLocalizations) {
-    return Row(
-      children: [
-        Icon(Icons.people, color: Colors.grey[600]),
-        const SizedBox(width: 15),
-        Container(
-            constraints: BoxConstraints(maxWidth: 90),
-            child: TextField(
-              controller: _playersController,
-              focusNode: _playersNode,
-              textInputAction: TextInputAction.done,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: appLocalizations.translate('gamers'),
-              ),
-            )),
+        Expanded(
+          child: TextField(
+            controller: controller,
+            focusNode: node,
+            textInputAction: TextInputAction.done,
+            keyboardType: textInputType,
+            decoration: InputDecoration(
+                // labelText: appLocalizations.translate('gamers'),
+                labelText: labelText),
+          ),
+        ),
       ],
     );
   }
@@ -126,57 +108,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
     _placeNode.unfocus();
     _playersNode.unfocus();
     _groupNode.unfocus();
-  }
-
-  SizedBox _separator20() => const SizedBox(height: 20);
-
-  Widget dropDownHockeyItem(String imagePath) {
-    return Container(
-      width: 300,
-      height: 75,
-      margin: EdgeInsets.symmetric(vertical: 5),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          image: DecorationImage(fit: BoxFit.cover, image: AssetImage('assets/$imagePath'))),
-    );
-  }
-
-  Widget sportDropDownButton(AppLocalizations appLocalizations) {
-    return Container(
-      constraints: BoxConstraints(maxWidth: 300),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton(
-          itemHeight: 75,
-          value: _sportType,
-          iconSize: 0,
-          items: [
-            DropdownMenuItem(value: 'ice_hockey', child: dropDownHockeyItem('ice_hockey.jpg')),
-            DropdownMenuItem(
-                value: 'inline_hockey', child: dropDownHockeyItem('inline_hockey.jpg')),
-          ],
-          onChanged: (sport) {
-            setState(() {
-              _sportType = sport;
-            });
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _groupTextField(AppLocalizations appLocalizations) {
-    return Container(
-      constraints: BoxConstraints(maxWidth: 250),
-      child: TextField(
-        controller: _groupController,
-        focusNode: _groupNode,
-        textCapitalization: TextCapitalization.words,
-        decoration: InputDecoration(
-          hintText: appLocalizations.translate('name_of_group'),
-          labelText: appLocalizations.translate('group'),
-        ),
-      ),
-    );
   }
 
   void showInSnackBar(String description) {
@@ -248,55 +179,87 @@ class _AddEventScreenState extends State<AddEventScreen> {
     };
   }
 
-  Widget _content(BuildContext context, AppLocalizations appLocalizations) {
+  void onPressCreateButton(BuildContext context, AppLocalizations appLocalizations) async {
+    if (validInformations(appLocalizations) == false) return;
+    if (await validInternetConnection(appLocalizations) == false) return;
+    var id = widget.databaseReference.child('HockeyEvents/').push();
+    id.set(eventToJson());
+    Navigator.of(context).pop();
+  }
+
+  Widget sportContainer(String imagePath, bool isActive) {
+    return Container(
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+          border: Border.all(color: isActive == true ? Colors.red : Colors.transparent, width: 4),
+          image: DecorationImage(
+            // image: AssetImage('assets/ice_hockey_puck.png'),
+            image: AssetImage(imagePath),
+            fit: BoxFit.contain,
+          )),
+    );
+  }
+
+  Widget chooseSportWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        GestureDetector(
+            onTap: () {
+              setState(() {
+                _sportType = 'ice_hockey';
+                _iceHockeyState = true;
+                _inlineHockeyState = false;
+              });
+            },
+            child: sportContainer('assets/ice_hockey_puck.png', _iceHockeyState)),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _sportType = 'inline_hockey';
+              _iceHockeyState = false;
+              _inlineHockeyState = true;
+            });
+          },
+          child: sportContainer('assets/inline_hockey_ball.png', _inlineHockeyState),
+        ),
+      ],
+    );
+  }
+
+  Widget content(BuildContext context, AppLocalizations appLocalizations) {
     return SingleChildScrollView(
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 65),
         child: Column(
           children: [
-            _separator20(),
-            _groupTextField(appLocalizations),
-            _separator20(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _picker(appLocalizations, onChangedDatePicker),
-                _picker(appLocalizations, onChangedTimePicker, isDatePicker: false),
-              ],
-            ),
-            _separator20(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                placeTextField(appLocalizations),
-                playersTextField(appLocalizations),
-              ],
-            ),
-            _separator20(),
+            addEventTextField(_groupController, _groupNode, appLocalizations.translate('group')),
+            picker(appLocalizations, onChangedDatePicker),
+            picker(appLocalizations, onChangedTimePicker, isDatePicker: false),
+            addEventTextField(_placeController, _placeNode, appLocalizations.translate('place'),
+                icon: Icons.place_outlined),
+            addEventTextField(
+                _playersController, _playersNode, appLocalizations.translate('gamers'),
+                icon: Icons.people_outline, textInputType: TextInputType.number),
+            const SizedBox(height: 25),
             Container(
-              constraints: BoxConstraints(maxWidth: 300),
               alignment: Alignment.centerLeft,
               child: Text(
-                  appLocalizations.translate('choose_sport') +
+                  appLocalizations.translate('sport') +
                       ': ' +
                       appLocalizations.translate(_sportType),
                   style: TextStyle(fontSize: 17)),
             ),
-            _separator20(),
-            sportDropDownButton(appLocalizations),
-            _separator20(),
-            _separator20(),
+            const SizedBox(height: 25),
+            chooseSportWidget(),
+            const SizedBox(height: 25),
             ActionButton(
-              buttonColor: Colors.blue,
-              buttonText: appLocalizations.translate('create'),
-              onPressed: () async {
-                if (validInformations(appLocalizations) == false) return;
-                if (await validInternetConnection(appLocalizations) == false) return;
-                var id = widget.databaseReference.child('HockeyEvents/').push();
-                id.set(eventToJson());
-                Navigator.of(context).pop();
-              },
-            )
+                buttonColor: Colors.blue,
+                buttonText: appLocalizations.translate('create'),
+                onPressed: () => onPressCreateButton(context, appLocalizations))
           ],
         ),
       ),
@@ -313,7 +276,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
         appBar: AppBar(
           title: Text(appLocalizations.translate('add_new_event')),
         ),
-        body: _content(context, appLocalizations),
+        body: content(context, appLocalizations),
       ),
     );
   }

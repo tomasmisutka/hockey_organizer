@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/components/actionButton.dart';
 import 'package:hockey_organizer/services/authentication.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +15,6 @@ class Settings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppLocalizations appLocalizations = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(firebaseUser.displayName),
