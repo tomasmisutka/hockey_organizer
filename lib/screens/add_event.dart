@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/app_localization.dart';
+import 'package:hockey_organizer/components/actionButton.dart';
 
 class AddEventScreen extends StatefulWidget {
   final User firebaseUser;
@@ -285,23 +286,17 @@ class _AddEventScreenState extends State<AddEventScreen> {
             sportDropDownButton(appLocalizations),
             _separator20(),
             _separator20(),
-            Container(
-              width: double.infinity,
-              child: RaisedButton(
-                elevation: 15,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                color: Colors.blueAccent,
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Text(appLocalizations.translate('create')),
-                onPressed: () async {
-                  if (validInformations(appLocalizations) == false) return;
-                  if (await validInternetConnection(appLocalizations) == false) return;
-                  var id = widget.databaseReference.child('HockeyEvents/').push();
-                  id.set(eventToJson());
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
+            ActionButton(
+              buttonColor: Colors.blue,
+              buttonText: appLocalizations.translate('create'),
+              onPressed: () async {
+                if (validInformations(appLocalizations) == false) return;
+                if (await validInternetConnection(appLocalizations) == false) return;
+                var id = widget.databaseReference.child('HockeyEvents/').push();
+                id.set(eventToJson());
+                Navigator.of(context).pop();
+              },
+            )
           ],
         ),
       ),

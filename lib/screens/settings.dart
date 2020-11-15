@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/app_localization.dart';
+import 'package:hockey_organizer/components/actionButton.dart';
 import 'package:hockey_organizer/services/authentication.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
@@ -23,25 +24,16 @@ class Settings extends StatelessWidget {
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text('email address: ' + firebaseUser.email, style: TextStyle(fontSize: 16)),
             const SizedBox(height: 25),
-            RaisedButton(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                child: Text(ThemeProvider.themeOf(context).description),
-                onPressed: () => ThemeProvider.controllerOf(context).nextTheme()),
+            ActionButton(
+              buttonColor: Colors.blue,
+              buttonText: ThemeProvider.themeOf(context).description,
+              onPressed: () => ThemeProvider.controllerOf(context).nextTheme(),
+            ),
             Spacer(),
-            RaisedButton(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              onPressed: () => onPressLogOutButton(context),
-              color: Colors.red,
-              elevation: 10,
-              child: Text(
-                appLocalizations.translate('log_out'),
-                style: TextStyle(color: Colors.white),
-              ),
-            )
+            ActionButton(onPressed: () => onPressLogOutButton(context)),
           ],
         ),
       ),

@@ -90,7 +90,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _contentUI(AppLocalizations appLocalizations) {
+  Widget _content(AppLocalizations appLocalizations) {
     return SingleChildScrollView(
       child: FirebaseAnimatedList(
           shrinkWrap: true,
@@ -133,7 +133,7 @@ class _DashboardState extends State<Dashboard> {
       endDrawer: _chatDialog(),
       appBar: _appBarUI(context, appLocalizations, hockeyEventsDatabase),
       floatingActionButton: _floatingActionButtonUI(),
-      body: _contentUI(appLocalizations),
+      body: _content(appLocalizations),
     );
   }
 }
