@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/components/actionButton.dart';
+import 'package:hockey_organizer/models/player.dart';
 
 class AddEventScreen extends StatefulWidget {
   final User firebaseUser;
@@ -29,7 +30,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
   FocusNode _placeNode = FocusNode();
   FocusNode _playersNode = FocusNode();
   FocusNode _groupNode = FocusNode();
-  Map<String, dynamic> players;
+  List<String> players = [];
   bool _iceHockeyState = true;
   bool _inlineHockeyState = false;
 
@@ -40,7 +41,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
   @override
   void initState() {
     Player newPlayer = Player(firebaseUser.uid, firebaseUser.displayName);
-    players = {"${newPlayer.name}": newPlayer.uid};
+    players.add(newPlayer.uid);
     super.initState();
   }
 
@@ -168,7 +169,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
   Map<String, dynamic> eventToJson() {
     editDateFormat(_date);
     return {
-      'Owner': firebaseUser.displayName,
+      'Owner': firebaseUser.uid,
       'Group': _groupController.text.trim(),
       'Date': _date,
       'Time': _time,
@@ -195,11 +196,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
           border: Border.all(color: isActive == true ? Colors.red : Colors.transparent, width: 4),
-          image: DecorationImage(
-            // image: AssetImage('assets/ice_hockey_puck.png'),
-            image: AssetImage(imagePath),
-            fit: BoxFit.contain,
-          )),
+          image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.contain)),
     );
   }
 
@@ -217,15 +214,14 @@ class _AddEventScreenState extends State<AddEventScreen> {
             },
             child: sportContainer('assets/ice_hockey_puck.png', _iceHockeyState)),
         GestureDetector(
-          onTap: () {
-            setState(() {
-              _sportType = 'inline_hockey';
-              _iceHockeyState = false;
-              _inlineHockeyState = true;
-            });
-          },
-          child: sportContainer('assets/inline_hockey_ball.png', _inlineHockeyState),
-        ),
+            onTap: () {
+              setState(() {
+                _sportType = 'inline_hockey';
+                _iceHockeyState = false;
+                _inlineHockeyState = true;
+              });
+            },
+            child: sportContainer('assets/inline_hockey_ball.png', _inlineHockeyState)),
       ],
     );
   }
@@ -233,7 +229,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
   Widget content(BuildContext context, AppLocalizations appLocalizations) {
     return SingleChildScrollView(
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 65),
+        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 50),
         child: Column(
           children: [
             addEventTextField(_groupController, _groupNode, appLocalizations.translate('group')),
@@ -280,11 +276,4 @@ class _AddEventScreenState extends State<AddEventScreen> {
       ),
     );
   }
-}
-
-class Player {
-  String uid;
-  String name;
-
-  Player(this.uid, this.name);
 }

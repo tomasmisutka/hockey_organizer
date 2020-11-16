@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/app_localization.dart';
-import 'package:hockey_organizer/contants.dart';
+import 'package:hockey_organizer/constants.dart';
 
 class VerificationScreen extends StatelessWidget {
   Widget _buildVerificationDescription(BuildContext context) {

@@ -20,7 +20,7 @@ class Settings extends StatelessWidget {
         title: Text(firebaseUser.displayName),
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 50),
         child: Column(
           children: [
             Text('email address: ' + firebaseUser.email, style: TextStyle(fontSize: 16)),

@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 import '../app_localization.dart';
-import '../contants.dart';
+import '../constants.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -27,7 +27,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   FocusNode _loginPasswordFocusNode = FocusNode();
   FocusNode _loginEmailFocusNode = FocusNode();
-
   FocusNode _registerNameFocusNode = FocusNode();
   FocusNode _registerEmailFocusNode = FocusNode();
   FocusNode _registerPasswordFocusNode = FocusNode();
@@ -35,7 +34,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   TextEditingController _loginEmailController = TextEditingController();
   TextEditingController _loginPasswordController = TextEditingController();
-
   TextEditingController _registerNameController = TextEditingController();
   TextEditingController _registerEmailController = TextEditingController();
   TextEditingController _registerPasswordController = TextEditingController();
@@ -254,7 +252,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   void focusLoginPasswordTextField(String value) => _loginPasswordFocusNode.requestFocus();
   void unFocusLoginPasswordTextField(String value) => _loginPasswordFocusNode.unfocus();
-
   void focusRegisterEmailTextField(String value) => _registerEmailFocusNode.requestFocus();
   void focusRegisterPasswordTextField(String value) => _registerPasswordFocusNode.requestFocus();
   void focusRegisterRepeatPasswordTextField(String value) =>

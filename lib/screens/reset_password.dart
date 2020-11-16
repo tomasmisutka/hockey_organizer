@@ -6,7 +6,7 @@ import 'package:hockey_organizer/services/authentication.dart';
 import 'package:provider/provider.dart';
 
 import '../app_localization.dart';
-import '../contants.dart';
+import '../constants.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   @override

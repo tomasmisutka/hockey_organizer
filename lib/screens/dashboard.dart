@@ -32,8 +32,8 @@ class _DashboardState extends State<Dashboard> {
   DatabaseReference _hockeyDatabaseReference;
 
   Widget _buildUserProfileIcon(BuildContext context, String url) {
-    return GestureDetector(
-      onTap: () => Navigator.push(context,
+    return FlatButton(
+      onPressed: () => Navigator.push(context,
           MaterialPageRoute(builder: (_) => ThemeConsumer(child: Settings(widget.firebaseUser)))),
       child: Container(
         height: 35,
@@ -97,7 +97,7 @@ class _DashboardState extends State<Dashboard> {
           query: _hockeyDatabaseReference,
           itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation,
               int index) {
-            Map<String, dynamic> loggedUsers = Map.from(snapshot.value['Players']);
+            List<String> joinedUsers = List.from(snapshot.value['Players']);
             return ListTile(
               tileColor: index % 2 == 0 ? Colors.red : Colors.grey,
               leading: Column(
@@ -116,7 +116,7 @@ class _DashboardState extends State<Dashboard> {
               trailing: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(loggedUsers.length.toString() + '/' + snapshot.value['MaxPlayers']),
+                  Text(joinedUsers.length.toString() + '/' + snapshot.value['MaxPlayers']),
                 ],
               ),
             );
