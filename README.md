@@ -1,6 +1,6 @@
 # hockey_organizer
 
-a new Mobile app - Hockey Organizer
+a new Mobile app - Hockey Organizer app for AK7MT
 
 ## Getting Started
 
