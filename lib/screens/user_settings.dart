@@ -5,9 +5,9 @@ import 'package:hockey_organizer/services/authentication.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
 
-class Settings extends StatelessWidget {
+class UserSettings extends StatelessWidget {
   final User firebaseUser;
-  Settings(this.firebaseUser);
+  UserSettings(this.firebaseUser);
 
   void onPressLogOutButton(BuildContext context) {
     context.read<AuthenticationService>().signOut().whenComplete(() => Navigator.of(context).pop());
