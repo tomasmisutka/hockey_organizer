@@ -13,7 +13,7 @@ class CustomTextField extends StatefulWidget {
     this.focusNode,
     this.onFieldSubmitted,
     this.type = TextFieldType.EMAIL,
-    this.hintText,
+    this.hintText = '',
     this.isRepeatingPassword = false,
   });
   @override

@@ -1,13 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/app_localization.dart';
-import 'package:hockey_organizer/screens/settings.dart';
+import 'package:hockey_organizer/screens/user_settings.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 import 'add_event.dart';
+import 'user_settings.dart';
 
 class Dashboard extends StatefulWidget {
   final User firebaseUser;
@@ -20,21 +20,14 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  @override
-  void initState() {
-    final FirebaseDatabase database = FirebaseDatabase(app: widget.firebaseApp);
-    _hockeyDatabaseReference = database.reference().child('HockeyEvents');
-    super.initState();
-  }
-
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final referenceDatabase = FirebaseDatabase.instance;
-  DatabaseReference _hockeyDatabaseReference;
 
-  Widget _buildUserProfileIcon(BuildContext context, String url) {
+  Widget userProfileIcon(BuildContext context, String url) {
     return FlatButton(
-      onPressed: () => Navigator.push(context,
-          MaterialPageRoute(builder: (_) => ThemeConsumer(child: Settings(widget.firebaseUser)))),
+      onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (_) => ThemeConsumer(child: UserSettings(widget.firebaseUser)))),
       child: Container(
         height: 35,
         width: 35,
@@ -50,7 +43,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _chatDialog() {
+  Widget chatDialog() {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
       height: MediaQuery.of(context).size.height * 0.9,
@@ -65,15 +58,14 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  FloatingActionButton _floatingActionButtonUI() {
+  FloatingActionButton floatingActionButton() {
     return FloatingActionButton(
-        onPressed: () => _scaffoldKey.currentState.openEndDrawer(),
+        onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
         child: Icon(Icons.message),
         elevation: 10);
   }
 
-  AppBar _appBarUI(BuildContext context, AppLocalizations appLocalizations,
-      DatabaseReference databaseReference) {
+  AppBar appBar(BuildContext context, AppLocalizations appLocalizations) {
     return AppBar(
       title: Text(appLocalizations.translate('events')),
       leading: IconButton(
@@ -82,58 +74,64 @@ class _DashboardState extends State<Dashboard> {
           onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => ThemeProvider(
-                      child: AddEventScreen(widget.firebaseUser, databaseReference))))),
+                  builder: (_) => ThemeProvider(child: AddEventScreen(widget.firebaseUser))))),
       actions: [
-        _buildUserProfileIcon(context, widget.firebaseUser.photoURL),
+        userProfileIcon(context, widget.firebaseUser.photoURL),
       ],
     );
   }
 
-  Widget _content(AppLocalizations appLocalizations) {
-    return SingleChildScrollView(
-      child: FirebaseAnimatedList(
-          shrinkWrap: true,
-          query: _hockeyDatabaseReference,
-          itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation,
-              int index) {
-            List<String> joinedUsers = List.from(snapshot.value['Players']);
-            return ListTile(
-              tileColor: index % 2 == 0 ? Colors.red : Colors.grey,
-              leading: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(snapshot.value['Date']),
-                ],
-              ),
-              onTap: () {},
-              title: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(snapshot.value['Group']),
-                ],
-              ),
-              trailing: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(joinedUsers.length.toString() + '/' + snapshot.value['MaxPlayers']),
-                ],
-              ),
-            );
-          }),
+  Container sportLogo(bool isIceHockey) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            image: isIceHockey
+                ? AssetImage('assets/ice_hockey_puck.png')
+                : AssetImage('assets/inline_hockey_ball.png')),
+      ),
+    );
+  }
+
+  Widget content(AppLocalizations appLocalizations) {
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection('events');
+    return StreamBuilder(
+      stream: collectionReference.snapshots(),
+      builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, int) {
+                var data = snapshot.data.docs[int].data();
+                List<dynamic> loggedUsers = data['logged_players'];
+                return ListTile(
+                  contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  onTap: () {},
+                  title: Text(data['group_name'], style: TextStyle(fontSize: 20)),
+                  trailing: Text(
+                    loggedUsers.length.toString() + '/' + data['max_players'],
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  leading: data['sport_type'] == 'ice_hockey' ? sportLogo(true) : sportLogo(false),
+                );
+              });
+        }
+        return Container();
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final hockeyEventsDatabase = referenceDatabase.reference();
+    // final hockeyEventsDatabase = referenceDatabase.reference();
     final AppLocalizations appLocalizations = AppLocalizations.of(context);
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: _chatDialog(),
-      appBar: _appBarUI(context, appLocalizations, hockeyEventsDatabase),
-      floatingActionButton: _floatingActionButtonUI(),
-      body: _content(appLocalizations),
+      endDrawer: chatDialog(),
+      appBar: appBar(context, appLocalizations),
+      floatingActionButton: floatingActionButton(),
+      body: content(appLocalizations),
     );
   }
 }

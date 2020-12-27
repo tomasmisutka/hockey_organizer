@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ActionButton extends StatelessWidget {
   final Color buttonColor;
   final String buttonText;
-  final Function onPressed;
+  final Function() onPressed;
 
   ActionButton({this.buttonColor = Colors.red, this.buttonText = 'Log out', this.onPressed});
 

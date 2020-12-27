@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/app_localization.dart';
@@ -10,16 +10,15 @@ import 'package:hockey_organizer/models/player.dart';
 
 class AddEventScreen extends StatefulWidget {
   final User firebaseUser;
-  final DatabaseReference databaseReference;
+  // final DatabaseReference databaseReference;
 
-  AddEventScreen(this.firebaseUser, this.databaseReference);
+  AddEventScreen(this.firebaseUser);
 
   @override
   _AddEventScreenState createState() => _AddEventScreenState();
 }
 
 class _AddEventScreenState extends State<AddEventScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String _date = DateTime.now().toString().substring(0, 10).trim();
   String _time = DateFormat('kk:mm').format(DateTime.now());
   String _errorText = '';
@@ -65,10 +64,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
         : DateTimePicker(
             type: DateTimePickerType.time,
             icon: Icon(Icons.access_time, color: iconColor),
-            calendarTitle: appLocalizations.translate('choose_time'),
-            timeLabelText: appLocalizations.translate('time'),
+            calendarTitle: appLocalizations.translate('choose_time').toString(),
+            timeLabelText: appLocalizations.translate('time').toString(),
             initialValue: _time,
             onChanged: isDatePicker ? null : onChanged,
+            // isDatePicker ? null : onChanged,
           );
   }
 
@@ -113,10 +113,10 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   void showInSnackBar(String description) {
     FocusScope.of(context).requestFocus(new FocusNode());
-    _scaffoldKey.currentState?.removeCurrentSnackBar();
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
       content: Text(
-        description,
+        description.toString(),
         textAlign: TextAlign.center,
         style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
       ),
@@ -129,7 +129,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
     ));
   }
 
-  bool validInformations(AppLocalizations appLocalizations) {
+  bool validInputs(AppLocalizations appLocalizations) {
     if (_groupController.text.trim() == '') {
       setState(() {
         _errorText = appLocalizations.translate('enter_group_name');
@@ -166,62 +166,64 @@ class _AddEventScreenState extends State<AddEventScreen> {
     return false;
   }
 
-  Map<String, dynamic> eventToJson() {
+  Map<String, dynamic> addEvent() {
     editDateFormat(_date);
     return {
-      'Owner': firebaseUser.uid,
-      'Group': _groupController.text.trim(),
-      'Date': _date,
-      'Time': _time,
-      'Place': _placeController.text.trim(),
-      'MaxPlayers': _playersController.text.trim(),
-      'Players': players,
-      'SportType': _sportType,
+      'owner': firebaseUser.uid,
+      'group_name': _groupController.text.trim().toUpperCase(),
+      'date': _date,
+      'time': _time,
+      'place': _placeController.text.trim().toUpperCase(),
+      'max_players': _playersController.text.trim(),
+      'logged_players': players,
+      'sport_type': _sportType,
     };
   }
 
   void onPressCreateButton(BuildContext context, AppLocalizations appLocalizations) async {
-    if (validInformations(appLocalizations) == false) return;
+    if (validInputs(appLocalizations) == false) return;
     if (await validInternetConnection(appLocalizations) == false) return;
-    var id = widget.databaseReference.child('HockeyEvents/').push();
-    id.set(eventToJson());
-    Navigator.of(context).pop();
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection('events');
+    collectionReference.add(addEvent()).whenComplete(() => Navigator.of(context).pop());
   }
 
-  Widget sportContainer(String imagePath, bool isActive) {
+  Widget sportView(String imagePath, bool isActive) {
     return Container(
       width: 100,
       height: 100,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
           border: Border.all(color: isActive == true ? Colors.red : Colors.transparent, width: 4),
           image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.contain)),
     );
   }
 
-  Widget chooseSportWidget() {
+  void onSportTap(bool isIceHockey) {
+    if (isIceHockey == true) {
+      setState(() {
+        _sportType = 'ice_hockey';
+        _iceHockeyState = true;
+        _inlineHockeyState = false;
+      });
+    } else {
+      setState(() {
+        _sportType = 'inline_hockey';
+        _iceHockeyState = false;
+        _inlineHockeyState = true;
+      });
+    }
+  }
+
+  Widget sportOptions() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         GestureDetector(
-            onTap: () {
-              setState(() {
-                _sportType = 'ice_hockey';
-                _iceHockeyState = true;
-                _inlineHockeyState = false;
-              });
-            },
-            child: sportContainer('assets/ice_hockey_puck.png', _iceHockeyState)),
+            onTap: () => onSportTap(true),
+            child: sportView('assets/ice_hockey_puck.png', _iceHockeyState)),
         GestureDetector(
-            onTap: () {
-              setState(() {
-                _sportType = 'inline_hockey';
-                _iceHockeyState = false;
-                _inlineHockeyState = true;
-              });
-            },
-            child: sportContainer('assets/inline_hockey_ball.png', _inlineHockeyState)),
+            onTap: () => onSportTap(false),
+            child: sportView('assets/inline_hockey_ball.png', _inlineHockeyState)),
       ],
     );
   }
@@ -244,17 +246,17 @@ class _AddEventScreenState extends State<AddEventScreen> {
             Container(
               alignment: Alignment.centerLeft,
               child: Text(
-                  appLocalizations.translate('sport') +
+                  appLocalizations.translate('sport').toString() +
                       ': ' +
-                      appLocalizations.translate(_sportType),
+                      appLocalizations.translate(_sportType).toString(),
                   style: TextStyle(fontSize: 17)),
             ),
             const SizedBox(height: 25),
-            chooseSportWidget(),
+            sportOptions(),
             const SizedBox(height: 25),
             ActionButton(
                 buttonColor: Colors.blue,
-                buttonText: appLocalizations.translate('create'),
+                buttonText: appLocalizations.translate('create').toString(),
                 onPressed: () => onPressCreateButton(context, appLocalizations))
           ],
         ),
@@ -268,7 +270,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
     return GestureDetector(
       onTap: () => unFocusTextFields(),
       child: Scaffold(
-        key: _scaffoldKey,
         appBar: AppBar(
           title: Text(appLocalizations.translate('add_new_event')),
         ),

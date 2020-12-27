@@ -14,7 +14,6 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController emailController = TextEditingController();
   final FocusNode emailNode = FocusNode();
   String _errorText = '';
@@ -141,8 +140,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   void showInSnackBar(String description) {
     FocusScope.of(context).requestFocus(new FocusNode());
-    _scaffoldKey.currentState?.removeCurrentSnackBar();
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
       content: Text(
         description,
         textAlign: TextAlign.center,
@@ -160,7 +159,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       body: GestureDetector(
         onTap: () => emailNode.unfocus(),
         child: Container(

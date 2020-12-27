@@ -23,8 +23,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   FocusNode _loginPasswordFocusNode = FocusNode();
   FocusNode _loginEmailFocusNode = FocusNode();
   FocusNode _registerNameFocusNode = FocusNode();
@@ -39,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   TextEditingController _registerPasswordController = TextEditingController();
   TextEditingController _registerRepeatPasswordController = TextEditingController();
 
-  PageController _pageController;
+  PageController _pageController = PageController();
 
   String _errorText = '';
   bool isLoading = false;
@@ -94,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     _registerEmailFocusNode.dispose();
     _registerPasswordFocusNode.dispose();
     _registerRepeatPasswordFocusNode.dispose();
-    _pageController?.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -103,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   void _onPressTabBarSignUPButton() {
-    _pageController?.animateToPage(1, duration: Duration(milliseconds: 300), curve: Curves.linear);
+    _pageController.animateToPage(1, duration: Duration(milliseconds: 300), curve: Curves.linear);
   }
 
   void onPressLogInButton(BuildContext context, AppLocalizations appLocalizations) async {
@@ -243,9 +241,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     if (connectivityResult == ConnectivityResult.mobile)
       return true;
     else if (connectivityResult == ConnectivityResult.wifi) return true;
-    setState(() {
-      _errorText = appLocalizations.translate('no_internet_connection');
-    });
+    if (appLocalizations != null) {
+      setState(() {
+        _errorText = appLocalizations.translate('no_internet_connection');
+      });
+    }
     showInSnackBar(_errorText);
     return false;
   }
@@ -261,8 +261,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   void showInSnackBar(String description) {
     FocusScope.of(context).requestFocus(new FocusNode());
-    _scaffoldKey.currentState?.removeCurrentSnackBar();
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
       content: Text(
         description,
         textAlign: TextAlign.center,
@@ -353,7 +353,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildConfirmButton(BuildContext context, String text,
+  Widget confirmationButton(BuildContext context, String text,
       {bool isLoginButton = true, double margin = 170}) {
     AppLocalizations appLocalizations = AppLocalizations.of(context);
     return Container(
@@ -399,7 +399,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildSignInContent(BuildContext context, AppLocalizations appLocalizations) {
+  Widget signInContent(BuildContext context, AppLocalizations appLocalizations) {
     return Container(
       padding: EdgeInsets.only(top: 23.0),
       child: Column(
@@ -436,7 +436,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                 ),
               ),
-              _buildConfirmButton(context, 'login'),
+              confirmationButton(context, 'login'),
             ],
           ),
           const SizedBox(height: 5),
@@ -518,7 +518,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                 ),
               ),
-              _buildConfirmButton(context, 'register', isLoginButton: false, margin: 340),
+              confirmationButton(context, 'register', isLoginButton: false, margin: 340),
             ],
           ),
         ],
@@ -532,7 +532,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   Widget _buildContent(BuildContext context, AppLocalizations appLocalizations) {
     return Scaffold(
-      key: _scaffoldKey,
       body: ModalProgressHUD(
         inAsyncCall: isLoading,
         progressIndicator: SpinKitThreeBounce(size: 55, color: Colors.black),
@@ -578,7 +577,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         children: [
                           ConstrainedBox(
                               constraints: const BoxConstraints.expand(),
-                              child: _buildSignInContent(context, appLocalizations)),
+                              child: signInContent(context, appLocalizations)),
                           ConstrainedBox(
                               constraints: const BoxConstraints.expand(),
                               child: _buildSignUpContent(context, appLocalizations)),
