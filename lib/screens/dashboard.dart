@@ -112,7 +112,6 @@ class _DashboardState extends State<Dashboard> {
                   contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                   onTap: () {},
                   title: Text(data['group_name'],
-                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

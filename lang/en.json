@@ -42,5 +42,6 @@
   "sport": "Sport",
   "group": "Group",
   "enter_group_name": "Enter group name",
-  "enter_players": "Enter max players"
+  "enter_players": "Enter max players",
+  "too_long_name": "Too long name"
 }

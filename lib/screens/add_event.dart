@@ -10,7 +10,6 @@ import 'package:hockey_organizer/models/player.dart';
 
 class AddEventScreen extends StatefulWidget {
   final User firebaseUser;
-  // final DatabaseReference databaseReference;
 
   AddEventScreen(this.firebaseUser);
 
@@ -68,7 +67,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
             timeLabelText: appLocalizations.translate('time').toString(),
             initialValue: _time,
             onChanged: isDatePicker ? null : onChanged,
-            // isDatePicker ? null : onChanged,
           );
   }
 
@@ -96,9 +94,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
             focusNode: node,
             textInputAction: TextInputAction.done,
             keyboardType: textInputType,
-            decoration: InputDecoration(
-                // labelText: appLocalizations.translate('gamers'),
-                labelText: labelText),
+            decoration: InputDecoration(labelText: labelText),
           ),
         ),
       ],
@@ -133,6 +129,13 @@ class _AddEventScreenState extends State<AddEventScreen> {
     if (_groupController.text.trim() == '') {
       setState(() {
         _errorText = appLocalizations.translate('enter_group_name');
+      });
+      showInSnackBar(_errorText);
+      return false;
+    }
+    if (_groupController.text.trim().length > 15) {
+      setState(() {
+        _errorText = appLocalizations.translate('too_long_name');
       });
       showInSnackBar(_errorText);
       return false;
