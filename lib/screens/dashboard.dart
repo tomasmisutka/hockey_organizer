@@ -29,8 +29,8 @@ class _DashboardState extends State<Dashboard> {
           MaterialPageRoute(
               builder: (_) => ThemeConsumer(child: UserSettings(widget.firebaseUser)))),
       child: Container(
-        height: 35,
-        width: 35,
+        height: 40,
+        width: 40,
         margin: EdgeInsets.only(right: 10),
         decoration: BoxDecoration(
           shape: BoxShape.circle,

@@ -275,7 +275,9 @@ class _AddEventScreenState extends State<AddEventScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(appLocalizations.translate('add_new_event'),
-              style: TextStyle(fontWeight: FontWeight.bold)),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).floatingActionButtonTheme.foregroundColor)),
         ),
         body: content(context, appLocalizations),
       ),

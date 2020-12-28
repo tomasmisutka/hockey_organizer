@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/components/actionButton.dart';
 import 'package:hockey_organizer/services/authentication.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,11 @@ class UserSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLocalizations = AppLocalizations.of(context);
+    TextStyle _contentStyle = TextStyle(
+        fontSize: 16,
+        color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
+        fontWeight: FontWeight.bold);
     return Scaffold(
       appBar: AppBar(
         title: Text(firebaseUser.displayName,
@@ -23,21 +29,24 @@ class UserSettings extends StatelessWidget {
                 fontWeight: FontWeight.bold)),
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+        padding: EdgeInsets.all(30),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('email address: ' + firebaseUser.email,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 25),
+            Text(appLocalizations.translate('email_address') + ': ' + firebaseUser.email,
+                style: _contentStyle),
+            const SizedBox(height: 15),
+            Text(appLocalizations.translate('choose_favourite_team'), style: _contentStyle),
+            const SizedBox(height: 5),
             ActionButton(
               buttonColor: Colors.blue,
               buttonText: ThemeProvider.themeOf(context).description,
               onPressed: () => ThemeProvider.controllerOf(context).nextTheme(),
             ),
-            Spacer(),
+            const SizedBox(height: 15),
+            Expanded(
+                child: Container(
+                    decoration: BoxDecoration(image: DecorationImage(image: AssetImage(''))))),
             ActionButton(onPressed: () => onPressLogOutButton(context)),
           ],
         ),
