@@ -15,8 +15,6 @@
   "name_and_surname": "Name and Surname",
   "enter_your_name": "Enter your name",
   "so_long_name": "Your name is too long",
-  "verification_screen_description": "Verification mail has been sent to your email address. Please verify your mail and restart application. If you can not see verification email, please, check your spam folder.",
-  "best_regards": "Best Regards, your Hockey Organizer Team",
   "or": "Or",
   "enter_email_address": "Enter email address",
   "invalid_email_address": "Invalid email address",

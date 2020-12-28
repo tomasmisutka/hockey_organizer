@@ -271,7 +271,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
       onTap: () => unFocusTextFields(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(appLocalizations.translate('add_new_event')),
+          title: Text(appLocalizations.translate('add_new_event'),
+              style: TextStyle(fontWeight: FontWeight.bold)),
         ),
         body: content(context, appLocalizations),
       ),

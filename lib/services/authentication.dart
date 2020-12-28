@@ -8,11 +8,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hockey_organizer/app_localization.dart';
 
 class AuthenticationService {
-  final FirebaseAuth _firebaseAuth;
-  final GoogleSignIn _googleSignIn;
-  final FacebookLogin _facebookLogin;
-
-  AuthenticationService(this._firebaseAuth, this._googleSignIn, this._facebookLogin);
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FacebookLogin _facebookLogin = FacebookLogin();
 
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
 
@@ -62,7 +60,6 @@ class AuthenticationService {
   Future<String> signInWithGoogle() async {
     GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
 
-    // if (googleSignInAccount != null) {
     try {
       GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount.authentication;
@@ -75,7 +72,6 @@ class AuthenticationService {
     } catch (error) {
       return error.toString();
     }
-    // }
     return '';
   }
 
@@ -130,12 +126,6 @@ class AuthenticationService {
 
   //sign out
   Future<void> signOut() async {
-    // if (_firebaseAuth.currentUser.providerData[0].providerId == 'google.com') {
-    //   await _googleSignIn.signOut();
-    // }
-    // if (_firebaseAuth.currentUser.providerData[0].providerId == 'facebook.com') {
-    //   await _facebookLogin.logOut();
-    // }
     await _firebaseAuth.signOut();
   }
 

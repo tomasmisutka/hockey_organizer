@@ -67,7 +67,10 @@ class _DashboardState extends State<Dashboard> {
 
   AppBar appBar(BuildContext context, AppLocalizations appLocalizations) {
     return AppBar(
-      title: Text(appLocalizations.translate('events')),
+      title: Text(appLocalizations.translate('events'),
+          style: TextStyle(
+              color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
+              fontWeight: FontWeight.bold)),
       leading: IconButton(
           icon: Icon(Icons.add),
           iconSize: 25,
@@ -95,7 +98,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget content(AppLocalizations appLocalizations) {
-    CollectionReference collectionReference = FirebaseFirestore.instance.collection('events');
+    Query collectionReference = FirebaseFirestore.instance.collection('events').orderBy("date");
     return StreamBuilder(
       stream: collectionReference.snapshots(),
       builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -108,10 +111,18 @@ class _DashboardState extends State<Dashboard> {
                 return ListTile(
                   contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                   onTap: () {},
-                  title: Text(data['group_name'], style: TextStyle(fontSize: 20)),
+                  title: Text(data['group_name'],
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).floatingActionButtonTheme.foregroundColor)),
                   trailing: Text(
                     loggedUsers.length.toString() + '/' + data['max_players'],
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).floatingActionButtonTheme.foregroundColor),
                   ),
                   leading: data['sport_type'] == 'ice_hockey' ? sportLogo(true) : sportLogo(false),
                 );

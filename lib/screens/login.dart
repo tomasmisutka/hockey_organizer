@@ -120,8 +120,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       if (!mounted) return;
       setState(() {
         _errorText = error;
-        stopLoading();
       });
+      stopLoading();
     });
     if (_errorText != '') {
       showInSnackBar(_errorText);
@@ -149,8 +149,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       if (!mounted) return;
       setState(() {
         _errorText = error;
-        stopLoading();
       });
+      stopLoading();
     });
     if (_errorText != '') {
       showInSnackBar(_errorText);
@@ -277,7 +277,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     ));
   }
 
-  Widget _buildMenuBar(BuildContext context, AppLocalizations appLocalizations) {
+  Widget _menuBar(BuildContext context, AppLocalizations appLocalizations) {
     TextStyle _menuTextStyle =
         TextStyle(color: rightTabColor, fontSize: 18, fontWeight: FontWeight.w900);
 
@@ -318,7 +318,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildOrTextDivider(bool isOnLeftSide) {
+  Widget textDivider(bool isOnLeftSide) {
     List<Color> leftDividerColors = [Colors.white10, Colors.white];
     List<Color> rightDividerColors = [Colors.white, Colors.white10];
     return Container(
@@ -335,19 +335,19 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildOrTextWithDividers(AppLocalizations appLocalizations) {
+  Widget orTextWithDividers(AppLocalizations appLocalizations) {
     return Padding(
       padding: EdgeInsets.only(top: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildOrTextDivider(true),
+          textDivider(true),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Text(appLocalizations.translate('or'),
                 style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
-          _buildOrTextDivider(false),
+          textDivider(false),
         ],
       ),
     );
@@ -423,7 +423,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         type: TextFieldType.EMAIL,
                         onFieldSubmitted: focusLoginPasswordTextField,
                       ),
-                      _buildTextFieldDivider(),
+                      textFieldDivider(),
                       CustomTextField(
                         controller: _loginPasswordController,
                         focusNode: _loginPasswordFocusNode,
@@ -447,7 +447,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 appLocalizations.translate('forgot_password'),
                 style: TextStyle(color: Colors.white, fontSize: 18),
               )),
-          _buildOrTextWithDividers(appLocalizations),
+          orTextWithDividers(appLocalizations),
           const SizedBox(height: 15),
           Column(
             mainAxisSize: MainAxisSize.min,
@@ -469,7 +469,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildSignUpContent(BuildContext context, AppLocalizations appLocalizations) {
+  Widget signUpContent(BuildContext context, AppLocalizations appLocalizations) {
     return Container(
       padding: EdgeInsets.only(top: 23.0),
       child: Column(
@@ -492,21 +492,21 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           hintText: appLocalizations.translate('name_and_surname'),
                           type: TextFieldType.NAME_AND_SURNAME,
                           onFieldSubmitted: focusRegisterEmailTextField),
-                      _buildTextFieldDivider(),
+                      textFieldDivider(),
                       CustomTextField(
                           controller: _registerEmailController,
                           focusNode: _registerEmailFocusNode,
                           hintText: appLocalizations.translate('email_address'),
                           type: TextFieldType.EMAIL,
                           onFieldSubmitted: focusRegisterPasswordTextField),
-                      _buildTextFieldDivider(),
+                      textFieldDivider(),
                       CustomTextField(
                           controller: _registerPasswordController,
                           focusNode: _registerPasswordFocusNode,
                           hintText: appLocalizations.translate('password'),
                           type: TextFieldType.PASSWORD,
                           onFieldSubmitted: focusRegisterRepeatPasswordTextField),
-                      _buildTextFieldDivider(),
+                      textFieldDivider(),
                       CustomTextField(
                           controller: _registerRepeatPasswordController,
                           focusNode: _registerRepeatPasswordFocusNode,
@@ -526,11 +526,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildTextFieldDivider() {
+  Widget textFieldDivider() {
     return Container(width: 250.0, height: 1.0, color: Colors.grey[400]);
   }
 
-  Widget _buildContent(BuildContext context, AppLocalizations appLocalizations) {
+  Widget content(BuildContext context, AppLocalizations appLocalizations) {
     return Scaffold(
       body: ModalProgressHUD(
         inAsyncCall: isLoading,
@@ -556,7 +556,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   children: [
                     const SizedBox(height: 75),
                     Image(width: 250.0, height: 191.0, image: AssetImage('assets/hockey.png')),
-                    _buildMenuBar(context, appLocalizations),
+                    _menuBar(context, appLocalizations),
                     Expanded(
                       flex: 2,
                       child: PageView(
@@ -580,7 +580,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               child: signInContent(context, appLocalizations)),
                           ConstrainedBox(
                               constraints: const BoxConstraints.expand(),
-                              child: _buildSignUpContent(context, appLocalizations)),
+                              child: signUpContent(context, appLocalizations)),
                         ],
                       ),
                     ),
@@ -595,6 +595,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     AppLocalizations appLocalizations = AppLocalizations.of(context);
-    return _buildContent(context, appLocalizations);
+    return content(context, appLocalizations);
   }
 }

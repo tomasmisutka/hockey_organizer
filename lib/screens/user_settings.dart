@@ -17,13 +17,20 @@ class UserSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(firebaseUser.displayName),
+        title: Text(firebaseUser.displayName,
+            style: TextStyle(
+                color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
+                fontWeight: FontWeight.bold)),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 30, horizontal: 50),
         child: Column(
           children: [
-            Text('email address: ' + firebaseUser.email, style: TextStyle(fontSize: 16)),
+            Text('email address: ' + firebaseUser.email,
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
+                    fontWeight: FontWeight.bold)),
             const SizedBox(height: 25),
             ActionButton(
               buttonColor: Colors.blue,

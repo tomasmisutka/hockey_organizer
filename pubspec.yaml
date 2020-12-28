@@ -59,7 +59,6 @@ flutter:
   assets:
     - assets/
     - lang/
-    - hockey_teams/
 
   fonts:
     - family: IMBPlexSans

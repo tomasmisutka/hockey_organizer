@@ -1,10 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/services/authentication.dart';
+import 'package:hockey_organizer/utils/themes.dart';
 import 'package:provider/provider.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 import 'package:theme_provider/theme_provider.dart';
@@ -14,6 +13,7 @@ import 'authentication_wrapper.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FirebaseApp app = await Firebase.initializeApp();
+  FirebaseFirestore.instance.settings = Settings(persistenceEnabled: true);
   runApp(HockeyOrganizer(app));
 }
 
@@ -21,21 +21,18 @@ class HockeyOrganizer extends StatelessWidget {
   final FirebaseApp firebaseApp;
   HockeyOrganizer(this.firebaseApp);
 
-  final googleSignIn = GoogleSignIn();
-  final facebookLogin = FacebookLogin();
   @override
   Widget build(BuildContext context) {
+    HockeyThemes themes = HockeyThemes();
     return MultiProvider(
       providers: [
-        Provider<AuthenticationService>(
-          create: (_) => AuthenticationService(FirebaseAuth.instance, googleSignIn, facebookLogin),
-        ),
+        Provider<AuthenticationService>(create: (_) => AuthenticationService()),
         StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),
       ],
       child: ThemeProvider(
         saveThemesOnChange: true,
         loadThemeOnInit: true,
-        themes: [AppTheme.light(), AppTheme.dark()],
+        themes: themes.getThemes(),
         child: ThemeConsumer(
           child: Builder(
             builder: (themeContext) => MaterialApp(
@@ -66,7 +63,7 @@ class _Splash extends StatelessWidget {
         imageSize: 280,
         imageSrc: "assets/hockey.png",
         text: 'Hockey\n  Organizer',
-        textType: TextType.NormalText,
+        textType: TextType.ScaleAnimatedText,
         textStyle: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, height: 1.5),
       ),
     );
