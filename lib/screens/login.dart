@@ -2,6 +2,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hockey_organizer/components/CustomTextField.dart';
 import 'package:hockey_organizer/screens/reset_password.dart';
@@ -9,9 +10,10 @@ import 'package:hockey_organizer/services/authentication.dart';
 import 'package:hockey_organizer/utils/buble_indicator_painter.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 import '../app_localization.dart';
-import '../contants.dart';
+import '../constants.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -21,11 +23,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   FocusNode _loginPasswordFocusNode = FocusNode();
   FocusNode _loginEmailFocusNode = FocusNode();
-
   FocusNode _registerNameFocusNode = FocusNode();
   FocusNode _registerEmailFocusNode = FocusNode();
   FocusNode _registerPasswordFocusNode = FocusNode();
@@ -33,13 +32,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   TextEditingController _loginEmailController = TextEditingController();
   TextEditingController _loginPasswordController = TextEditingController();
-
   TextEditingController _registerNameController = TextEditingController();
   TextEditingController _registerEmailController = TextEditingController();
   TextEditingController _registerPasswordController = TextEditingController();
   TextEditingController _registerRepeatPasswordController = TextEditingController();
 
-  PageController _pageController;
+  PageController _pageController = PageController();
 
   String _errorText = '';
   bool isLoading = false;
@@ -94,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     _registerEmailFocusNode.dispose();
     _registerPasswordFocusNode.dispose();
     _registerRepeatPasswordFocusNode.dispose();
-    _pageController?.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -103,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   void _onPressTabBarSignUPButton() {
-    _pageController?.animateToPage(1, duration: Duration(milliseconds: 300), curve: Curves.linear);
+    _pageController.animateToPage(1, duration: Duration(milliseconds: 300), curve: Curves.linear);
   }
 
   void onPressLogInButton(BuildContext context, AppLocalizations appLocalizations) async {
@@ -119,10 +117,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           password: _loginPasswordController.text.trim(),
         )
         .then((error) {
+      if (!mounted) return;
       setState(() {
         _errorText = error;
-        stopLoading();
       });
+      stopLoading();
     });
     if (_errorText != '') {
       showInSnackBar(_errorText);
@@ -150,8 +149,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       if (!mounted) return;
       setState(() {
         _errorText = error;
-        stopLoading();
       });
+      stopLoading();
     });
     if (_errorText != '') {
       showInSnackBar(_errorText);
@@ -166,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     stopLoading();
   }
 
-  void onPressFacebookIcon(AppLocalizations appLocalizations) async {
+  void onPressFacebookButton(AppLocalizations appLocalizations) async {
     if (await validInternetConnection(appLocalizations) == false) return;
     startLoading();
     await context.read<AuthenticationService>().signInWithFacebook();
@@ -242,16 +241,17 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     if (connectivityResult == ConnectivityResult.mobile)
       return true;
     else if (connectivityResult == ConnectivityResult.wifi) return true;
-    setState(() {
-      _errorText = appLocalizations.translate('no_internet_connection');
-    });
+    if (appLocalizations != null) {
+      setState(() {
+        _errorText = appLocalizations.translate('no_internet_connection');
+      });
+    }
     showInSnackBar(_errorText);
     return false;
   }
 
   void focusLoginPasswordTextField(String value) => _loginPasswordFocusNode.requestFocus();
   void unFocusLoginPasswordTextField(String value) => _loginPasswordFocusNode.unfocus();
-
   void focusRegisterEmailTextField(String value) => _registerEmailFocusNode.requestFocus();
   void focusRegisterPasswordTextField(String value) => _registerPasswordFocusNode.requestFocus();
   void focusRegisterRepeatPasswordTextField(String value) =>
@@ -261,8 +261,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   void showInSnackBar(String description) {
     FocusScope.of(context).requestFocus(new FocusNode());
-    _scaffoldKey.currentState?.removeCurrentSnackBar();
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
       content: Text(
         description,
         textAlign: TextAlign.center,
@@ -277,7 +277,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     ));
   }
 
-  Widget _buildMenuBar(BuildContext context, AppLocalizations appLocalizations) {
+  Widget _menuBar(BuildContext context, AppLocalizations appLocalizations) {
     TextStyle _menuTextStyle =
         TextStyle(color: rightTabColor, fontSize: 18, fontWeight: FontWeight.w900);
 
@@ -318,7 +318,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildOrTextDivider(bool isOnLeftSide) {
+  Widget textDivider(bool isOnLeftSide) {
     List<Color> leftDividerColors = [Colors.white10, Colors.white];
     List<Color> rightDividerColors = [Colors.white, Colors.white10];
     return Container(
@@ -335,25 +335,25 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildOrTextWithDividers(AppLocalizations appLocalizations) {
+  Widget orTextWithDividers(AppLocalizations appLocalizations) {
     return Padding(
       padding: EdgeInsets.only(top: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildOrTextDivider(true),
+          textDivider(true),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Text(appLocalizations.translate('or'),
                 style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
-          _buildOrTextDivider(false),
+          textDivider(false),
         ],
       ),
     );
   }
 
-  Widget _buildConfirmButton(BuildContext context, String text,
+  Widget confirmationButton(BuildContext context, String text,
       {bool isLoginButton = true, double margin = 170}) {
     AppLocalizations appLocalizations = AppLocalizations.of(context);
     return Container(
@@ -399,7 +399,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildSignInContent(BuildContext context, AppLocalizations appLocalizations) {
+  Widget signInContent(BuildContext context, AppLocalizations appLocalizations) {
     return Container(
       padding: EdgeInsets.only(top: 23.0),
       child: Column(
@@ -423,7 +423,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         type: TextFieldType.EMAIL,
                         onFieldSubmitted: focusLoginPasswordTextField,
                       ),
-                      _buildTextFieldDivider(),
+                      textFieldDivider(),
                       CustomTextField(
                         controller: _loginPasswordController,
                         focusNode: _loginPasswordFocusNode,
@@ -436,26 +436,32 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                 ),
               ),
-              _buildConfirmButton(context, 'login'),
+              confirmationButton(context, 'login'),
             ],
           ),
-          _buildOrTextWithDividers(appLocalizations),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           FlatButton(
-              onPressed: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => ResetPasswordScreen())),
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => ThemeConsumer(child: ResetPasswordScreen()))),
               child: Text(
                 appLocalizations.translate('forgot_password'),
                 style: TextStyle(color: Colors.white, fontSize: 18),
               )),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          orTextWithDividers(appLocalizations),
+          const SizedBox(height: 15),
+          Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              _buildSocialMediaButton(
-                  appLocalizations, 'assets/icon_google.png', onPressGoogleIcon),
-              const SizedBox(width: 40),
-              _buildSocialMediaButton(
-                  appLocalizations, 'assets/icon_facebook.png', onPressFacebookIcon),
+              GoogleSignInButton(
+                onPressed: () => onPressGoogleIcon(appLocalizations),
+                darkMode: true,
+                text: appLocalizations.translate('continue_with_google'),
+              ),
+              const SizedBox(height: 20),
+              FacebookSignInButton(
+                onPressed: () => onPressFacebookButton(appLocalizations),
+                text: appLocalizations.translate('continue_with_facebook'),
+              )
             ],
           ),
         ],
@@ -463,7 +469,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildSignUpContent(BuildContext context, AppLocalizations appLocalizations) {
+  Widget signUpContent(BuildContext context, AppLocalizations appLocalizations) {
     return Container(
       padding: EdgeInsets.only(top: 23.0),
       child: Column(
@@ -486,21 +492,21 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           hintText: appLocalizations.translate('name_and_surname'),
                           type: TextFieldType.NAME_AND_SURNAME,
                           onFieldSubmitted: focusRegisterEmailTextField),
-                      _buildTextFieldDivider(),
+                      textFieldDivider(),
                       CustomTextField(
                           controller: _registerEmailController,
                           focusNode: _registerEmailFocusNode,
                           hintText: appLocalizations.translate('email_address'),
                           type: TextFieldType.EMAIL,
                           onFieldSubmitted: focusRegisterPasswordTextField),
-                      _buildTextFieldDivider(),
+                      textFieldDivider(),
                       CustomTextField(
                           controller: _registerPasswordController,
                           focusNode: _registerPasswordFocusNode,
                           hintText: appLocalizations.translate('password'),
                           type: TextFieldType.PASSWORD,
                           onFieldSubmitted: focusRegisterRepeatPasswordTextField),
-                      _buildTextFieldDivider(),
+                      textFieldDivider(),
                       CustomTextField(
                           controller: _registerRepeatPasswordController,
                           focusNode: _registerRepeatPasswordFocusNode,
@@ -512,7 +518,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                 ),
               ),
-              _buildConfirmButton(context, 'register', isLoginButton: false, margin: 340),
+              confirmationButton(context, 'register', isLoginButton: false, margin: 340),
             ],
           ),
         ],
@@ -520,25 +526,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildSocialMediaButton(
-      AppLocalizations appLocalizations, String imagePath, Function(AppLocalizations) onTap) {
-    return GestureDetector(
-      onTap: () => onTap(appLocalizations),
-      child: Container(
-          margin: EdgeInsets.only(top: 10),
-          padding: const EdgeInsets.all(15.0),
-          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-          child: Image.asset(imagePath, width: 40, height: 40)),
-    );
-  }
-
-  Widget _buildTextFieldDivider() {
+  Widget textFieldDivider() {
     return Container(width: 250.0, height: 1.0, color: Colors.grey[400]);
   }
 
-  Widget _buildContent(BuildContext context, AppLocalizations appLocalizations) {
+  Widget content(BuildContext context, AppLocalizations appLocalizations) {
     return Scaffold(
-      key: _scaffoldKey,
       body: ModalProgressHUD(
         inAsyncCall: isLoading,
         progressIndicator: SpinKitThreeBounce(size: 55, color: Colors.black),
@@ -550,7 +543,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height >= 775.0
                     ? MediaQuery.of(context).size.height
-                    : 775.0,
+                    : 810.0,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                       colors: [Constants.START_GRADIENT_COLOR, Constants.END_GRADIENT_COLOR],
@@ -562,8 +555,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 child: Column(
                   children: [
                     const SizedBox(height: 75),
-                    Image(width: 250.0, height: 191.0, image: AssetImage('assets/hockey.png')),
-                    _buildMenuBar(context, appLocalizations),
+                    Image(width: 250.0, height: 191.0, image: AssetImage('assets/logo.png')),
+                    _menuBar(context, appLocalizations),
                     Expanded(
                       flex: 2,
                       child: PageView(
@@ -584,10 +577,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         children: [
                           ConstrainedBox(
                               constraints: const BoxConstraints.expand(),
-                              child: _buildSignInContent(context, appLocalizations)),
+                              child: signInContent(context, appLocalizations)),
                           ConstrainedBox(
                               constraints: const BoxConstraints.expand(),
-                              child: _buildSignUpContent(context, appLocalizations)),
+                              child: signUpContent(context, appLocalizations)),
                         ],
                       ),
                     ),
@@ -602,6 +595,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     AppLocalizations appLocalizations = AppLocalizations.of(context);
-    return _buildContent(context, appLocalizations);
+    return content(context, appLocalizations);
   }
 }

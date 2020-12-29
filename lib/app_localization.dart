@@ -39,7 +39,7 @@ class AppLocalizations {
     return supportedLocales.first;
   }
 
-  Map<String, String> _localizedStrings;
+  Map<String, String> _localizedStrings = {};
 
   Future<bool> load() async {
     // Load the language JSON file from the "lang" folder
@@ -55,7 +55,7 @@ class AppLocalizations {
 
   // This method will be called from every widget which needs a localized text
   String translate(String key) {
-    return _localizedStrings[key];
+    return _localizedStrings[key].toString();
   }
 
   static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();

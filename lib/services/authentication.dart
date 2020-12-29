@@ -8,16 +8,14 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hockey_organizer/app_localization.dart';
 
 class AuthenticationService {
-  final FirebaseAuth _firebaseAuth;
-  final GoogleSignIn _googleSignIn;
-  final FacebookLogin _facebookLogin;
-
-  AuthenticationService(this._firebaseAuth, this._googleSignIn, this._facebookLogin);
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FacebookLogin _facebookLogin = FacebookLogin();
 
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
 
   //sign in with email & password
-  Future<String> signIn(BuildContext context, {String email, String password}) async {
+  Future<String> signIn(BuildContext context, {String email = '', String password = ''}) async {
     AppLocalizations appLocalizations = AppLocalizations.of(context);
     try {
       await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
@@ -35,7 +33,7 @@ class AuthenticationService {
 
   //register with email & password
   Future<String> signUp(BuildContext context,
-      {String displayName, String email, String password}) async {
+      {String displayName = '', String email = '', String password = ''}) async {
     AppLocalizations appLocalizations = AppLocalizations.of(context);
     try {
       UserCredential userCredential =
@@ -47,7 +45,7 @@ class AuthenticationService {
         await userCredential.user.sendEmailVerification();
         return '';
       } catch (e) {
-        return e.message;
+        return e.toString();
       }
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {
@@ -62,19 +60,17 @@ class AuthenticationService {
   Future<String> signInWithGoogle() async {
     GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
 
-    if (googleSignInAccount != null) {
-      try {
-        GoogleSignInAuthentication googleSignInAuthentication =
-            await googleSignInAccount.authentication;
+    try {
+      GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
 
-        AuthCredential googleCredential = GoogleAuthProvider.credential(
-            idToken: googleSignInAuthentication.idToken,
-            accessToken: googleSignInAuthentication.accessToken);
+      AuthCredential googleCredential = GoogleAuthProvider.credential(
+          idToken: googleSignInAuthentication.idToken,
+          accessToken: googleSignInAuthentication.accessToken);
 
-        await _firebaseAuth.signInWithCredential(googleCredential);
-      } catch (error) {
-        return error.message;
-      }
+      await _firebaseAuth.signInWithCredential(googleCredential);
+    } catch (error) {
+      return error.toString();
     }
     return '';
   }
@@ -85,7 +81,7 @@ class AuthenticationService {
 
     switch (loginResult.status) {
       case FacebookLoginStatus.loggedIn:
-        final FacebookAuthCredential facebookAuthCredential =
+        final OAuthCredential facebookAuthCredential =
             FacebookAuthProvider.credential(loginResult.accessToken.token);
         try {
           await _firebaseAuth.signInWithCredential(facebookAuthCredential);
@@ -100,7 +96,7 @@ class AuthenticationService {
               GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
               GoogleSignInAuthentication googleSignInAuthentication =
                   await googleSignInAccount.authentication;
-              GoogleAuthCredential googleAuthCredential = GoogleAuthProvider.credential(
+              OAuthCredential googleAuthCredential = GoogleAuthProvider.credential(
                 accessToken: googleSignInAuthentication.accessToken,
                 idToken: googleSignInAuthentication.idToken,
               );
@@ -116,7 +112,6 @@ class AuthenticationService {
         }
 
         return '';
-        break;
       case FacebookLoginStatus.cancelledByUser:
         break;
       case FacebookLoginStatus.error:
@@ -131,12 +126,6 @@ class AuthenticationService {
 
   //sign out
   Future<void> signOut() async {
-    if (_firebaseAuth.currentUser.providerData[0].providerId == 'google.com') {
-      await _googleSignIn.signOut();
-    }
-    if (_firebaseAuth.currentUser.providerData[0].providerId == 'facebook.com') {
-      await _facebookLogin.logOut();
-    }
     await _firebaseAuth.signOut();
   }
 
