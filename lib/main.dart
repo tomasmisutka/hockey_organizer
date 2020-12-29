@@ -61,7 +61,7 @@ class _Splash extends StatelessWidget {
         home: AuthenticationWrapper(firebaseApp),
         duration: 2000,
         imageSize: 280,
-        imageSrc: "assets/hockey.png",
+        imageSrc: "assets/logo.png",
         text: 'Hockey\n  Organizer',
         textType: TextType.ScaleAnimatedText,
         textStyle: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, height: 1.5),

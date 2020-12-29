@@ -259,7 +259,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
             const SizedBox(height: 25),
             ActionButton(
                 buttonColor: Colors.blue,
-                buttonText: appLocalizations.translate('create').toString(),
+                buttonText: 'create',
                 onPressed: () => onPressCreateButton(context, appLocalizations))
           ],
         ),

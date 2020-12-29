@@ -34,7 +34,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               iconSize: 30,
             ),
           ),
-          Image(width: 250.0, height: 191.0, image: AssetImage('assets/hockey.png')),
+          Image(width: 250.0, height: 191.0, image: AssetImage('assets/logo.png')),
           Stack(
             alignment: Alignment.center,
             children: [

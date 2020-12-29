@@ -555,7 +555,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 child: Column(
                   children: [
                     const SizedBox(height: 75),
-                    Image(width: 250.0, height: 191.0, image: AssetImage('assets/hockey.png')),
+                    Image(width: 250.0, height: 191.0, image: AssetImage('assets/logo.png')),
                     _menuBar(context, appLocalizations),
                     Expanded(
                       flex: 2,

@@ -116,12 +116,15 @@ class _DashboardState extends State<Dashboard> {
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).floatingActionButtonTheme.foregroundColor)),
-                  trailing: Text(
-                    loggedUsers.length.toString() + '/' + data['max_players'],
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).floatingActionButtonTheme.foregroundColor),
+                  trailing: Container(
+                    width: 45,
+                    child: Text(
+                      loggedUsers.length.toString() + '/' + data['max_players'],
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).floatingActionButtonTheme.foregroundColor),
+                    ),
                   ),
                   leading: data['sport_type'] == 'ice_hockey' ? sportLogo(true) : sportLogo(false),
                 );

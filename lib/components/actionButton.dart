@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hockey_organizer/app_localization.dart';
 
 class ActionButton extends StatelessWidget {
   final Color buttonColor;
   final String buttonText;
   final Function() onPressed;
 
-  ActionButton({this.buttonColor = Colors.red, this.buttonText = 'Log out', this.onPressed});
+  ActionButton({this.buttonColor = Colors.red, this.buttonText = 'log_out', this.onPressed});
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLocalizations = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       child: RaisedButton(
@@ -16,7 +18,11 @@ class ActionButton extends StatelessWidget {
         onPressed: onPressed,
         color: buttonColor,
         elevation: 10,
-        child: Text(buttonText, style: TextStyle(color: Colors.white)),
+        child: Text(appLocalizations.translate(buttonText),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            )),
       ),
     );
   }
