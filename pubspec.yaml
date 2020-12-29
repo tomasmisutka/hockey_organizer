@@ -59,7 +59,7 @@ flutter:
   assets:
     - assets/
     - lang/
-    - team's_logo
+    - teams/
 
   fonts:
     - family: IMBPlexSans

@@ -7,7 +7,7 @@ class HockeyThemes {
   void _createThemes() {
     themes = [
       AppTheme(
-          id: 'anahaim_ducks',
+          id: 'anaheim_ducks',
           data: ThemeData(
               primaryColor: Color(0xffb5985a),
               accentColor: Color(0xfff95602),
@@ -23,7 +23,7 @@ class HockeyThemes {
               scaffoldBackgroundColor: Color(0xffffffff),
               floatingActionButtonTheme:
                   FloatingActionButtonThemeData(foregroundColor: Color(0xff000000))),
-          description: 'Arizona coyotes'),
+          description: 'Arizona Coyotes'),
       AppTheme(
           id: 'boston_bruins',
           data: ThemeData(
@@ -79,7 +79,7 @@ class HockeyThemes {
                   FloatingActionButtonThemeData(foregroundColor: Color(0xff236192))),
           description: 'Colorado Avalanche'),
       AppTheme(
-          id: 'columbus_bluejackets',
+          id: 'columbus_blue_jackets',
           data: ThemeData(
               primaryColor: Color(0xff041e42),
               accentColor: Color(0xffa2aaad),
@@ -97,7 +97,7 @@ class HockeyThemes {
                   FloatingActionButtonThemeData(foregroundColor: Color(0xff010101))),
           description: 'Dallas Stars'),
       AppTheme(
-          id: 'detroid_red_wings',
+          id: 'detroit_red_wings',
           data: ThemeData(
               primaryColor: Color(0xffc8102e),
               accentColor: Color(0xffc8102e),
@@ -232,7 +232,7 @@ class HockeyThemes {
                   FloatingActionButtonThemeData(foregroundColor: Color(0xffffb81c))),
           description: 'St.Louis Blues'),
       AppTheme(
-          id: 'tampa_bay_lighting',
+          id: 'tampa_bay_lightning',
           data: ThemeData(
               primaryColor: Color(0xff00205b),
               accentColor: Color(0xffffffff),

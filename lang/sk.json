@@ -48,5 +48,6 @@
   "enter_group_name": "Zadajte názov skupiny",
   "enter_players": "Zadajte počet hráčov",
   "too_long_name": "Príliš dlhý názov",
-  "choose_favourite_team": "Obľúbený tím z NHL"
+  "choose_favourite_team": "Obľúbený tím z NHL",
+  "name": "Meno"
 }
