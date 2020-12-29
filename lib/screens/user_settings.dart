@@ -104,6 +104,8 @@ class _UserSettingsState extends State<UserSettings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme:
+            IconThemeData(color: Theme.of(context).floatingActionButtonTheme.foregroundColor),
         title: Text(widget.firebaseUser.displayName,
             style: TextStyle(
               color: Theme.of(context).floatingActionButtonTheme.foregroundColor,

@@ -72,8 +72,8 @@ class _DashboardState extends State<Dashboard> {
               color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
               fontWeight: FontWeight.bold)),
       leading: IconButton(
-          icon: Icon(Icons.add),
-          iconSize: 25,
+          icon: Icon(Icons.add, color: Theme.of(context).floatingActionButtonTheme.foregroundColor),
+          iconSize: 30,
           onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -91,7 +91,7 @@ class _DashboardState extends State<Dashboard> {
       decoration: BoxDecoration(
         image: DecorationImage(
             image: isIceHockey
-                ? AssetImage('assets/ice_hockey_puck.png')
+                ? AssetImage('assets/hockey_puck.png')
                 : AssetImage('assets/inline_hockey_ball.png')),
       ),
     );

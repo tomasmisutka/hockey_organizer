@@ -223,7 +223,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
       children: [
         GestureDetector(
             onTap: () => onSportTap(true),
-            child: sportView('assets/ice_hockey_puck.png', _iceHockeyState)),
+            child: sportView('assets/hockey_puck.png', _iceHockeyState)),
         GestureDetector(
             onTap: () => onSportTap(false),
             child: sportView('assets/inline_hockey_ball.png', _inlineHockeyState)),
@@ -249,9 +249,9 @@ class _AddEventScreenState extends State<AddEventScreen> {
             Container(
               alignment: Alignment.centerLeft,
               child: Text(
-                  appLocalizations.translate('sport').toString() +
+                  appLocalizations.translate('sport') +
                       ': ' +
-                      appLocalizations.translate(_sportType).toString(),
+                      appLocalizations.translate(_sportType),
                   style: TextStyle(fontSize: 17)),
             ),
             const SizedBox(height: 25),
@@ -274,10 +274,14 @@ class _AddEventScreenState extends State<AddEventScreen> {
       onTap: () => unFocusTextFields(),
       child: Scaffold(
         appBar: AppBar(
+          iconTheme: IconThemeData(
+            color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
+          ),
           title: Text(appLocalizations.translate('add_new_event'),
               style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).floatingActionButtonTheme.foregroundColor)),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
+              )),
         ),
         body: content(context, appLocalizations),
       ),
