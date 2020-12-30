@@ -25,9 +25,14 @@ class AuthenticationService {
         return appLocalizations.translate('account_does_not_exists');
       } else if (error.code == 'wrong-password') {
         return appLocalizations.translate('wrong_password');
+      } else if (error.code == 'network-request-failed') {
+        print('hurray');
+        return '';
       } else {
         return '';
       }
+    } catch (e) {
+      return e;
     }
   }
 
@@ -69,8 +74,12 @@ class AuthenticationService {
           accessToken: googleSignInAuthentication.accessToken);
 
       await _firebaseAuth.signInWithCredential(googleCredential);
-    } catch (error) {
-      return error.toString();
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      return e.message;
+    } catch (e) {
+      print(e);
+      return e;
     }
     return '';
   }

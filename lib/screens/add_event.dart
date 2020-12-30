@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -45,7 +46,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   Widget picker(AppLocalizations appLocalizations, Function(String) onChanged,
       {bool isDatePicker = true}) {
-    Color iconColor = Colors.grey[300];
+    Color iconColor = Colors.black;
     return isDatePicker
         ? DateTimePicker(
             type: DateTimePickerType.date,
@@ -86,12 +87,13 @@ class _AddEventScreenState extends State<AddEventScreen> {
       TextInputType textInputType = TextInputType.name}) {
     return Row(
       children: [
-        Icon(icon, color: Colors.grey[300]),
+        Icon(icon, color: Colors.black),
         const SizedBox(width: 15),
         Expanded(
           child: TextField(
             controller: controller,
             focusNode: node,
+            style: TextStyle(fontWeight: FontWeight.bold),
             textInputAction: TextInputAction.done,
             keyboardType: textInputType,
             decoration: InputDecoration(labelText: labelText),
@@ -147,6 +149,13 @@ class _AddEventScreenState extends State<AddEventScreen> {
       showInSnackBar(_errorText);
       return false;
     }
+    if (_placeController.text.trim().length > 20) {
+      setState(() {
+        _errorText = appLocalizations.translate('too_long_name');
+      });
+      showInSnackBar(_errorText);
+      return false;
+    }
     if (_playersController.text.trim() == '') {
       setState(() {
         _errorText = appLocalizations.translate('enter_players');
@@ -157,14 +166,18 @@ class _AddEventScreenState extends State<AddEventScreen> {
     return true;
   }
 
-  Future<bool> validInternetConnection(AppLocalizations appLocalizations) async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile)
-      return true;
-    else if (connectivityResult == ConnectivityResult.wifi) return true;
-    setState(() {
-      _errorText = appLocalizations.translate('no_internet_connection');
-    });
+  Future<bool> checkInternetConnection(AppLocalizations appLocalizations) async {
+    try {
+      final internetAccess = await InternetAddress.lookup('google.com');
+      if (internetAccess.isNotEmpty && internetAccess[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (e) {
+      print(e.message);
+      setState(() {
+        _errorText = appLocalizations.translate('no_internet_connection');
+      });
+    }
     showInSnackBar(_errorText);
     return false;
   }
@@ -185,7 +198,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   void onPressCreateButton(BuildContext context, AppLocalizations appLocalizations) async {
     if (validInputs(appLocalizations) == false) return;
-    if (await validInternetConnection(appLocalizations) == false) return;
+    if (await checkInternetConnection(appLocalizations) == false) return;
     CollectionReference collectionReference = FirebaseFirestore.instance.collection('events');
     collectionReference.add(addEvent()).whenComplete(() => Navigator.of(context).pop());
   }
@@ -226,7 +239,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
             child: sportView('assets/hockey_puck.png', _iceHockeyState)),
         GestureDetector(
             onTap: () => onSportTap(false),
-            child: sportView('assets/inline_hockey_ball.png', _inlineHockeyState)),
+            child: sportView('assets/hockey_ball.png', _inlineHockeyState)),
       ],
     );
   }
@@ -252,7 +265,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   appLocalizations.translate('sport') +
                       ': ' +
                       appLocalizations.translate(_sportType),
-                  style: TextStyle(fontSize: 17)),
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 25),
             sportOptions(),

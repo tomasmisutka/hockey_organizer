@@ -1,4 +1,5 @@
-import 'package:connectivity/connectivity.dart';
+import 'dart:io';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -106,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   void onPressLogInButton(BuildContext context, AppLocalizations appLocalizations) async {
     String email = _loginEmailController.text.trim();
-    if (await validInternetConnection(appLocalizations) == false) return;
+    if (await checkInternetConnection(appLocalizations) == false) return;
     if (validEmailAddress(email.toLowerCase(), appLocalizations) == false) return;
     startLoading();
     await context
@@ -130,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   void onPressRegisterButton(BuildContext context, AppLocalizations appLocalizations) async {
     String emailAddress = _registerEmailController.text.trim();
-    if (await validInternetConnection(appLocalizations) == false) return;
+    if (await checkInternetConnection(appLocalizations) == false) return;
     if (validNameAndSurname(appLocalizations) == false) return;
     if (validEmailAddress(emailAddress.toLowerCase(), appLocalizations) == false) return;
     if (validPassword(appLocalizations) == false) return;
@@ -158,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   void onPressGoogleIcon(AppLocalizations appLocalizations) async {
-    if (await validInternetConnection(appLocalizations) == false) return;
+    if (await checkInternetConnection(appLocalizations) == false) return;
     startLoading();
     await context.read<AuthenticationService>().signInWithGoogle();
     if (!mounted) return;
@@ -166,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   void onPressFacebookButton(AppLocalizations appLocalizations) async {
-    if (await validInternetConnection(appLocalizations) == false) return;
+    if (await checkInternetConnection(appLocalizations) == false) return;
     startLoading();
     await context.read<AuthenticationService>().signInWithFacebook();
     if (!mounted) return;
@@ -236,12 +237,14 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     return true;
   }
 
-  Future<bool> validInternetConnection(AppLocalizations appLocalizations) async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile)
-      return true;
-    else if (connectivityResult == ConnectivityResult.wifi) return true;
-    if (appLocalizations != null) {
+  Future<bool> checkInternetConnection(AppLocalizations appLocalizations) async {
+    try {
+      final internetAccess = await InternetAddress.lookup('google.com');
+      if (internetAccess.isNotEmpty && internetAccess[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (e) {
+      print(e.message);
       setState(() {
         _errorText = appLocalizations.translate('no_internet_connection');
       });

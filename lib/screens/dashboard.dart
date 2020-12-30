@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/app_localization.dart';
+import 'package:hockey_organizer/models/event_detail.dart';
+import 'package:hockey_organizer/screens/event_detail.dart';
 import 'package:hockey_organizer/screens/user_settings.dart';
 import 'package:theme_provider/theme_provider.dart';
 
@@ -21,6 +25,27 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  bool currentInternetAccess = false;
+
+  Future<bool> _checkInternetConnection() async {
+    try {
+      final internetAccess = await InternetAddress.lookup('google.com');
+      if (internetAccess.isNotEmpty && internetAccess[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (e) {
+      return false;
+    }
+    return false;
+  }
+
+  ImageProvider getIcon(String url) {
+    _checkInternetConnection().then((value) => currentInternetAccess = value);
+    if (url == null || currentInternetAccess == false) {
+      return AssetImage('assets/icon_user.png');
+    }
+    return NetworkImage(url);
+  }
 
   Widget userProfileIcon(BuildContext context, String url) {
     return FlatButton(
@@ -36,7 +61,7 @@ class _DashboardState extends State<Dashboard> {
           shape: BoxShape.circle,
           image: DecorationImage(
             fit: BoxFit.cover,
-            image: url == null ? AssetImage('assets/icon_user.png') : NetworkImage(url),
+            image: getIcon(url),
           ),
         ),
       ),
@@ -84,17 +109,34 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Container sportLogo(bool isIceHockey) {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: isIceHockey
-                ? AssetImage('assets/hockey_puck.png')
-                : AssetImage('assets/inline_hockey_ball.png')),
+  Widget sportLogo(bool isIceHockey, String heroTag) {
+    return Hero(
+      tag: heroTag,
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: isIceHockey
+                  ? AssetImage('assets/hockey_puck.png')
+                  : AssetImage('assets/hockey_ball.png')),
+        ),
       ),
     );
+  }
+
+  void onHockeyEventTap(BuildContext context, Map<String, dynamic> data, String heroTag) {
+    EventDetail detail = EventDetail(
+        data['owner'],
+        data['time'],
+        data['date'],
+        data['logged_players'],
+        data['max_players'],
+        data['place'],
+        data['group_name'],
+        data['sport_type']);
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => HockeyEventDetail(detail, heroTag)));
   }
 
   Widget content(AppLocalizations appLocalizations) {
@@ -107,10 +149,11 @@ class _DashboardState extends State<Dashboard> {
               itemCount: snapshot.data.docs.length,
               itemBuilder: (context, int) {
                 var data = snapshot.data.docs[int].data();
+                String heroTag = snapshot.data.docs[int].id; //you will use that
                 List<dynamic> loggedUsers = data['logged_players'];
                 return ListTile(
                   contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                  onTap: () {},
+                  onTap: () => onHockeyEventTap(context, data, heroTag),
                   title: Text(data['group_name'],
                       style: TextStyle(
                           fontSize: 18,
@@ -126,7 +169,9 @@ class _DashboardState extends State<Dashboard> {
                           color: Theme.of(context).floatingActionButtonTheme.foregroundColor),
                     ),
                   ),
-                  leading: data['sport_type'] == 'ice_hockey' ? sportLogo(true) : sportLogo(false),
+                  leading: data['sport_type'] == 'ice_hockey'
+                      ? sportLogo(true, heroTag)
+                      : sportLogo(false, heroTag),
                 );
               });
         }
@@ -137,7 +182,6 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    // final hockeyEventsDatabase = referenceDatabase.reference();
     final AppLocalizations appLocalizations = AppLocalizations.of(context);
     return Scaffold(
       key: _scaffoldKey,

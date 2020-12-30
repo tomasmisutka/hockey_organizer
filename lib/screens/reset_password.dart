@@ -1,4 +1,5 @@
-import 'package:connectivity/connectivity.dart';
+import 'dart:io';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/components/CustomTextField.dart';
@@ -127,13 +128,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   Future<bool> validInternetConnection(AppLocalizations appLocalizations) async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile)
-      return true;
-    else if (connectivityResult == ConnectivityResult.wifi) return true;
-    setState(() {
-      _errorText = appLocalizations.translate('no_internet_connection');
-    });
+    try {
+      final internetAccess = await InternetAddress.lookup('google.com');
+      if (internetAccess.isNotEmpty && internetAccess[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (e) {
+      print(e.message);
+      setState(() {
+        _errorText = appLocalizations.translate('no_internet_connection');
+      });
+    }
     showInSnackBar(_errorText);
     return false;
   }
