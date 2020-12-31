@@ -9,16 +9,16 @@ import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/components/actionButton.dart';
 import 'package:hockey_organizer/models/player.dart';
 
-class AddEventScreen extends StatefulWidget {
+class AddMatch extends StatefulWidget {
   final User firebaseUser;
 
-  AddEventScreen(this.firebaseUser);
+  AddMatch(this.firebaseUser);
 
   @override
-  _AddEventScreenState createState() => _AddEventScreenState();
+  _AddMatchState createState() => _AddMatchState();
 }
 
-class _AddEventScreenState extends State<AddEventScreen> {
+class _AddMatchState extends State<AddMatch> {
   String _date = DateTime.now().toString().substring(0, 10).trim();
   String _time = DateFormat('kk:mm').format(DateTime.now());
   String _errorText = '';
@@ -29,7 +29,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
   FocusNode _placeNode = FocusNode();
   FocusNode _playersNode = FocusNode();
   FocusNode _groupNode = FocusNode();
-  List<String> players = [];
+  Map<String, dynamic> loggedPlayers = {};
   bool _iceHockeyState = true;
   bool _inlineHockeyState = false;
 
@@ -40,7 +40,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
   @override
   void initState() {
     Player newPlayer = Player(firebaseUser.uid, firebaseUser.displayName);
-    players.add(newPlayer.uid);
+    loggedPlayers[newPlayer.uid] = newPlayer.name;
     super.initState();
   }
 
@@ -82,7 +82,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
   void onChangedDatePicker(newDate) => _date = newDate;
   void onChangedTimePicker(newTime) => _time = newTime;
 
-  Widget addEventTextField(TextEditingController controller, FocusNode node, String labelText,
+  Widget newMatchTextField(TextEditingController controller, FocusNode node, String labelText,
       {IconData icon = Icons.description_outlined,
       TextInputType textInputType = TextInputType.name}) {
     return Row(
@@ -182,7 +182,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
     return false;
   }
 
-  Map<String, dynamic> addEvent() {
+  Map<String, dynamic> addMatch() {
     editDateFormat(_date);
     return {
       'owner': firebaseUser.uid,
@@ -191,7 +191,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
       'time': _time,
       'place': _placeController.text.trim().toUpperCase(),
       'max_players': _playersController.text.trim(),
-      'logged_players': players,
+      'logged_players': loggedPlayers,
       'sport_type': _sportType,
     };
   }
@@ -199,8 +199,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
   void onPressCreateButton(BuildContext context, AppLocalizations appLocalizations) async {
     if (validInputs(appLocalizations) == false) return;
     if (await checkInternetConnection(appLocalizations) == false) return;
-    CollectionReference collectionReference = FirebaseFirestore.instance.collection('events');
-    collectionReference.add(addEvent()).whenComplete(() => Navigator.of(context).pop());
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection('matches');
+    collectionReference.add(addMatch()).whenComplete(() => Navigator.of(context).pop());
   }
 
   Widget sportView(String imagePath, bool isActive) {
@@ -250,12 +250,12 @@ class _AddEventScreenState extends State<AddEventScreen> {
         padding: EdgeInsets.symmetric(vertical: 30, horizontal: 50),
         child: Column(
           children: [
-            addEventTextField(_groupController, _groupNode, appLocalizations.translate('group')),
+            newMatchTextField(_groupController, _groupNode, appLocalizations.translate('group')),
             picker(appLocalizations, onChangedDatePicker),
             picker(appLocalizations, onChangedTimePicker, isDatePicker: false),
-            addEventTextField(_placeController, _placeNode, appLocalizations.translate('place'),
+            newMatchTextField(_placeController, _placeNode, appLocalizations.translate('place'),
                 icon: Icons.place_outlined),
-            addEventTextField(
+            newMatchTextField(
                 _playersController, _playersNode, appLocalizations.translate('max_players'),
                 icon: Icons.people_outline, textInputType: TextInputType.number),
             const SizedBox(height: 25),
@@ -271,9 +271,10 @@ class _AddEventScreenState extends State<AddEventScreen> {
             sportOptions(),
             const SizedBox(height: 25),
             ActionButton(
-                buttonColor: Colors.blue,
-                buttonText: 'create',
-                onPressed: () => onPressCreateButton(context, appLocalizations))
+              buttonColor: Colors.blue,
+              buttonText: 'create',
+              onPressed: () => onPressCreateButton(context, appLocalizations),
+            )
           ],
         ),
       ),
@@ -290,7 +291,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
           iconTheme: IconThemeData(
             color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
           ),
-          title: Text(appLocalizations.translate('add_new_event'),
+          title: Text(appLocalizations.translate('new_match'),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).floatingActionButtonTheme.foregroundColor,

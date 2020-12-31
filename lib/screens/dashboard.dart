@@ -5,12 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/app_localization.dart';
-import 'package:hockey_organizer/models/event_detail.dart';
-import 'package:hockey_organizer/screens/event_detail.dart';
+import 'package:hockey_organizer/models/match_detail.dart';
+import 'package:hockey_organizer/screens/match_detail.dart';
 import 'package:hockey_organizer/screens/user_settings.dart';
 import 'package:theme_provider/theme_provider.dart';
 
-import 'add_event.dart';
+import 'add_match.dart';
 import 'user_settings.dart';
 
 class Dashboard extends StatefulWidget {
@@ -26,6 +26,13 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool currentInternetAccess = false;
+  // Color tileColor = Colors.white;
+
+  TextStyle _defaultTextStyle(BuildContext context) {
+    return TextStyle(
+        color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
+        fontWeight: FontWeight.bold);
+  }
 
   void assignInternetStatus() async {
     currentInternetAccess = await _checkInternetConnection();
@@ -97,17 +104,14 @@ class _DashboardState extends State<Dashboard> {
 
   AppBar appBar(BuildContext context, AppLocalizations appLocalizations) {
     return AppBar(
-      title: Text(appLocalizations.translate('events'),
-          style: TextStyle(
-              color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
-              fontWeight: FontWeight.bold)),
+      title: Text(appLocalizations.translate('matches'), style: _defaultTextStyle(context)),
       leading: IconButton(
           icon: Icon(Icons.add, color: Theme.of(context).floatingActionButtonTheme.foregroundColor),
           iconSize: 30,
           onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => ThemeProvider(child: AddEventScreen(widget.firebaseUser))))),
+                  builder: (_) => ThemeProvider(child: AddMatch(widget.firebaseUser))))),
       actions: [
         userProfileIcon(context, widget.firebaseUser.photoURL),
       ],
@@ -131,7 +135,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void onHockeyEventTap(BuildContext context, Map<String, dynamic> data, String eventId) {
-    EventDetail eventDetail = EventDetail(
+    MatchDetail eventDetail = MatchDetail(
         data['owner'],
         data['time'],
         data['date'],
@@ -141,11 +145,11 @@ class _DashboardState extends State<Dashboard> {
         data['group_name'],
         data['sport_type']);
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => HockeyEventDetail(eventDetail, eventId)));
+        context, MaterialPageRoute(builder: (context) => MatchDetailScreen(eventDetail, eventId)));
   }
 
   Widget content() {
-    Query collectionReference = FirebaseFirestore.instance.collection('events').orderBy("date");
+    Query collectionReference = FirebaseFirestore.instance.collection('matches').orderBy("date");
     return StreamBuilder(
       stream: collectionReference.snapshots(),
       builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -154,29 +158,26 @@ class _DashboardState extends State<Dashboard> {
               itemCount: snapshot.data.docs.length,
               itemBuilder: (context, int) {
                 var data = snapshot.data.docs[int].data();
-                String heroAnimationTag = snapshot.data.docs[int].id; //you will use that
-                List<dynamic> loggedUsers = data['logged_players'];
+                String matchId = snapshot.data.docs[int].id;
+                Map<String, dynamic> loggedUsers = data['logged_players'];
                 return ListTile(
-                  contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                  onTap: () => onHockeyEventTap(context, data, heroAnimationTag),
+                  tileColor: loggedUsers.containsKey(widget.firebaseUser.uid)
+                      ? Colors.greenAccent
+                      : Colors.white,
+                  contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  onTap: () => onHockeyEventTap(context, data, matchId),
                   title: Text(data['group_name'],
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).floatingActionButtonTheme.foregroundColor)),
+                      style: _defaultTextStyle(context).copyWith(fontSize: 18)),
                   trailing: Container(
-                    width: 45,
+                    width: 55,
                     child: Text(
                       loggedUsers.length.toString() + '/' + data['max_players'],
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).floatingActionButtonTheme.foregroundColor),
+                      style: _defaultTextStyle(context).copyWith(fontSize: 20),
                     ),
                   ),
                   leading: data['sport_type'] == 'ice_hockey'
-                      ? sportLogo(true, heroAnimationTag)
-                      : sportLogo(false, heroAnimationTag),
+                      ? sportLogo(true, matchId)
+                      : sportLogo(false, matchId),
                 );
               });
         }

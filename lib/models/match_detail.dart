@@ -1,14 +1,14 @@
-class EventDetail {
+class MatchDetail {
   String owner;
   String time;
   String date;
-  List<dynamic> loggedPlayers;
+  Map<String, dynamic> loggedPlayers;
   String maxPlayers;
   String place;
   String groupName;
   String sportType;
 
-  EventDetail(
+  MatchDetail(
     this.owner,
     this.time,
     this.date,
