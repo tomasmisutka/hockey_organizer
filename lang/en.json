@@ -45,5 +45,6 @@
   "enter_players": "Enter max players",
   "too_long_name": "Too long name",
   "choose_favourite_team": "Your favourite NHL team",
-  "name": "Name"
+  "name": "Name",
+  "max_players": "Max players"
 }

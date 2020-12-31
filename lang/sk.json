@@ -49,5 +49,6 @@
   "enter_players": "Zadajte počet hráčov",
   "too_long_name": "Príliš dlhý názov",
   "choose_favourite_team": "Obľúbený tím z NHL",
-  "name": "Meno"
+  "name": "Meno",
+  "max_players": "Počet hráčov"
 }

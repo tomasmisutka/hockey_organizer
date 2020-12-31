@@ -27,20 +27,25 @@ class _DashboardState extends State<Dashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool currentInternetAccess = false;
 
+  void assignInternetStatus() async {
+    currentInternetAccess = await _checkInternetConnection();
+    setState(() {});
+  }
+
   Future<bool> _checkInternetConnection() async {
     try {
       final internetAccess = await InternetAddress.lookup('google.com');
       if (internetAccess.isNotEmpty && internetAccess[0].rawAddress.isNotEmpty) {
         return true;
       }
-    } on SocketException catch (e) {
+    } on SocketException {
       return false;
     }
     return false;
   }
 
   ImageProvider getIcon(String url) {
-    _checkInternetConnection().then((value) => currentInternetAccess = value);
+    assignInternetStatus();
     if (url == null || currentInternetAccess == false) {
       return AssetImage('assets/icon_user.png');
     }
@@ -125,8 +130,8 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  void onHockeyEventTap(BuildContext context, Map<String, dynamic> data, String heroTag) {
-    EventDetail detail = EventDetail(
+  void onHockeyEventTap(BuildContext context, Map<String, dynamic> data, String eventId) {
+    EventDetail eventDetail = EventDetail(
         data['owner'],
         data['time'],
         data['date'],
@@ -136,10 +141,10 @@ class _DashboardState extends State<Dashboard> {
         data['group_name'],
         data['sport_type']);
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => HockeyEventDetail(detail, heroTag)));
+        context, MaterialPageRoute(builder: (context) => HockeyEventDetail(eventDetail, eventId)));
   }
 
-  Widget content(AppLocalizations appLocalizations) {
+  Widget content() {
     Query collectionReference = FirebaseFirestore.instance.collection('events').orderBy("date");
     return StreamBuilder(
       stream: collectionReference.snapshots(),
@@ -149,11 +154,11 @@ class _DashboardState extends State<Dashboard> {
               itemCount: snapshot.data.docs.length,
               itemBuilder: (context, int) {
                 var data = snapshot.data.docs[int].data();
-                String heroTag = snapshot.data.docs[int].id; //you will use that
+                String heroAnimationTag = snapshot.data.docs[int].id; //you will use that
                 List<dynamic> loggedUsers = data['logged_players'];
                 return ListTile(
                   contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                  onTap: () => onHockeyEventTap(context, data, heroTag),
+                  onTap: () => onHockeyEventTap(context, data, heroAnimationTag),
                   title: Text(data['group_name'],
                       style: TextStyle(
                           fontSize: 18,
@@ -170,8 +175,8 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                   leading: data['sport_type'] == 'ice_hockey'
-                      ? sportLogo(true, heroTag)
-                      : sportLogo(false, heroTag),
+                      ? sportLogo(true, heroAnimationTag)
+                      : sportLogo(false, heroAnimationTag),
                 );
               });
         }
@@ -188,7 +193,7 @@ class _DashboardState extends State<Dashboard> {
       endDrawer: chatDialog(),
       appBar: appBar(context, appLocalizations),
       floatingActionButton: floatingActionButton(),
-      body: content(appLocalizations),
+      body: content(),
     );
   }
 }

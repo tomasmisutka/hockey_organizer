@@ -256,7 +256,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
             addEventTextField(_placeController, _placeNode, appLocalizations.translate('place'),
                 icon: Icons.place_outlined),
             addEventTextField(
-                _playersController, _playersNode, appLocalizations.translate('gamers'),
+                _playersController, _playersNode, appLocalizations.translate('max_players'),
                 icon: Icons.people_outline, textInputType: TextInputType.number),
             const SizedBox(height: 25),
             Container(
