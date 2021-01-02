@@ -50,5 +50,7 @@
   "too_long_name": "Príliš dlhý názov",
   "choose_favourite_team": "Obľúbený tím z NHL",
   "name": "Meno",
-  "max_players": "Počet hráčov"
+  "max_players": "Počet hráčov",
+  "remove": "chceš vyhodiť hráca",
+  "are_you_sure": "Ste si istý?"
 }

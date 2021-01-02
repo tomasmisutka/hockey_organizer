@@ -46,5 +46,7 @@
   "too_long_name": "Too long name",
   "choose_favourite_team": "Your favourite NHL team",
   "name": "Name",
-  "max_players": "Max players"
+  "max_players": "Max players",
+  "remove": "remove player",
+  "are_you_sure": "Are you sure?"
 }

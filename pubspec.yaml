@@ -44,6 +44,7 @@ dependencies:
   firebase_database: ^4.2.0
   date_time_picker: ^1.1.0
   material_design_icons_flutter: ^4.0.5755
+  cool_alert: ^1.0.3
   cupertino_icons: ^1.0.0
 
 dev_dependencies:

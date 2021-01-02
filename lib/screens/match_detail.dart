@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/models/match_detail.dart';
@@ -50,15 +51,30 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
       return Icon(MdiIcons.crown, size: 30, color: Color(0xffFFD700));
     }
 
-    if (firebaseUser.uid == player.uid) personIconColor = Colors.lightBlue;
+    if (firebaseUser.uid == player.uid) personIconColor = Colors.red;
     return Icon(Icons.person, size: 30, color: personIconColor);
   }
 
-  Future<void> updateData(String matchID, String playerUid) async {
-    DocumentReference reference = FirebaseFirestore.instance.collection('matches').doc(matchID);
+  Future<void> updateData(BuildContext context, String matchID, String playerUid) async {
+    DocumentReference _reference = FirebaseFirestore.instance.collection('matches').doc(matchID);
     matchDetail.loggedPlayers.remove(playerUid);
-    await reference.update({'logged_players': matchDetail.loggedPlayers});
+    await _reference.update({'logged_players': matchDetail.loggedPlayers});
     setState(() {});
+    Navigator.pop(context);
+  }
+
+  void showAlert(BuildContext context, String matchId, Player player) {
+    AppLocalizations _appLocalizations = AppLocalizations.of(context);
+    CoolAlert.show(
+        context: context,
+        type: CoolAlertType.confirm,
+        animType: CoolAlertAnimType.slideInDown,
+        title: _appLocalizations.translate('are_you_sure'),
+        cancelBtnText: _appLocalizations.translate('cancel'),
+        confirmBtnColor: Colors.green,
+        cancelBtnTextStyle: TextStyle(color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold),
+        onConfirmBtnTap: () => updateData(context, matchId, player.uid),
+        text: _appLocalizations.translate('remove') + ' ' + player.name);
   }
 
   Widget clearIcon(BuildContext context, int index, Player player, String id) {
@@ -66,7 +82,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
       child: IconButton(
         color: Colors.red,
         iconSize: 30,
-        onPressed: () => updateData(id, player.uid),
+        onPressed: () => showAlert(context, id, player),
         icon: Icon(Icons.clear),
       ),
       visible: showClearIconForOwner(context, index, player),
