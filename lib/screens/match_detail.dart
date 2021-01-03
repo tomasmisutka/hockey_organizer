@@ -99,7 +99,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
             buttonColor: Colors.orangeAccent,
             buttonText: 'edit',
           ),
-          alignment: Alignment.bottomLeft),
+          alignment: Alignment.bottomRight),
       visible: firebaseUser.uid == matchDetail.owner ? true : false,
     );
   }
@@ -161,34 +161,6 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
     showDialog(context: context, builder: (_) => alertDialog(appLocalizations, data));
   }
 
-  void onPressCancelMatch(BuildContext context, AppLocalizations appLocalizations) {
-    DocumentReference _reference = FirebaseFirestore.instance.collection('matches').doc(matchID);
-    CoolAlert.show(
-        context: context,
-        type: CoolAlertType.confirm,
-        animType: CoolAlertAnimType.slideInDown,
-        title: appLocalizations.translate('are_you_sure'),
-        cancelBtnText: appLocalizations.translate('cancel'),
-        confirmBtnColor: Colors.green,
-        cancelBtnTextStyle: TextStyle(color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold),
-        onConfirmBtnTap: () {
-          _reference.delete();
-          Navigator.pop(context);
-          Navigator.pop(context);
-        },
-        text: appLocalizations.translate('cancel_match') + ' ' + matchDetail.groupName);
-  }
-
-  Widget deleteMatchButton(BuildContext context, AppLocalizations appLocalizations) {
-    return Align(
-      alignment: Alignment.bottomRight,
-      child: ActionButton(
-          onPressed: () => onPressCancelMatch(context, appLocalizations),
-          buttonText: 'cancel_match',
-          buttonColor: Colors.red),
-    );
-  }
-
   void onPressJoinButton() {
     matchDetail.loggedPlayers[firebaseUser.uid] = firebaseUser.displayName;
     matchDetail.updateData({'logged_players': matchDetail.loggedPlayers}, matchID);
@@ -201,7 +173,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
 
   Widget playerConditionButton(
       BuildContext context, AppLocalizations appLocalizations, DocumentReference reference) {
-    if (firebaseUser.uid == matchDetail.owner) return deleteMatchButton(context, appLocalizations);
+    if (firebaseUser.uid == matchDetail.owner) return editIcon(context, appLocalizations);
     return matchDetail.getJoinOrLeaveButton(context, appLocalizations, reference, firebaseUser.uid,
         onPressJoinButton, onPressLeaveButton);
   }

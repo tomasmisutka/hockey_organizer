@@ -55,5 +55,6 @@
   "cancel_match": "Cancel match",
   "edit": "Edit",
   "edit_match": "Edit match",
-  "save_edits": "Save edits"
+  "save_edits": "Save edits",
+  "delete": "Delete"
 }

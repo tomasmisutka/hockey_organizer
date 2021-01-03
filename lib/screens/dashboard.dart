@@ -1,12 +1,15 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/models/match_detail.dart';
 import 'package:hockey_organizer/screens/match_detail.dart';
 import 'package:hockey_organizer/screens/user_settings.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 import 'add_match.dart';
@@ -144,7 +147,31 @@ class _DashboardState extends State<Dashboard> {
             builder: (context) => MatchDetailScreen(eventDetail, eventId, firebaseUser)));
   }
 
-  Widget content() {
+  Color tileColor(var data) {
+    if (firebaseUser.uid == data['owner']) return Colors.yellowAccent[100];
+    if (data['logged_players'].containsKey(firebaseUser.uid)) return Colors.greenAccent;
+    return Colors.white;
+  }
+
+  void onPressDeleteMatchButton(
+      BuildContext context, AppLocalizations appLocalizations, String matchID, String groupName) {
+    DocumentReference _reference = FirebaseFirestore.instance.collection('matches').doc(matchID);
+    CoolAlert.show(
+        context: context,
+        type: CoolAlertType.confirm,
+        animType: CoolAlertAnimType.slideInDown,
+        title: appLocalizations.translate('are_you_sure'),
+        cancelBtnText: appLocalizations.translate('cancel'),
+        confirmBtnColor: Colors.green,
+        cancelBtnTextStyle: TextStyle(color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold),
+        onConfirmBtnTap: () {
+          _reference.delete();
+          Navigator.pop(context);
+        },
+        text: appLocalizations.translate('cancel_match') + ' ' + groupName);
+  }
+
+  Widget content(AppLocalizations appLocalizations) {
     Query collectionReference = FirebaseFirestore.instance.collection('matches').orderBy("date");
     return StreamBuilder(
       stream: collectionReference.snapshots(),
@@ -154,25 +181,39 @@ class _DashboardState extends State<Dashboard> {
               itemCount: snapshot.data.docs.length,
               itemBuilder: (context, int) {
                 var data = snapshot.data.docs[int].data();
-                String matchId = snapshot.data.docs[int].id;
+                String _matchID = snapshot.data.docs[int].id;
                 Map<String, dynamic> loggedUsers = data['logged_players'];
-                return ListTile(
-                  tileColor:
-                      loggedUsers.containsKey(firebaseUser.uid) ? Colors.greenAccent : Colors.white,
-                  contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  onTap: () => onHockeyEventTap(context, data, matchId),
-                  title: Text(data['group_name'],
-                      style: _defaultTextStyle(context).copyWith(fontSize: 18)),
-                  trailing: Container(
-                    width: 55,
-                    child: Text(
-                      loggedUsers.length.toString() + '/' + data['max_players'],
-                      style: _defaultTextStyle(context).copyWith(fontSize: 20),
+                return Slidable(
+                  actionPane: SlidableStrechActionPane(),
+                  actionExtentRatio: 0.25,
+                  secondaryActions: [
+                    firebaseUser.uid == data['owner']
+                        ? IconSlideAction(
+                            caption: appLocalizations.translate('delete'),
+                            color: Colors.red,
+                            icon: Icons.delete,
+                            onTap: () => onPressDeleteMatchButton(
+                                context, appLocalizations, _matchID, data['group_name']),
+                          )
+                        : Container(child: Icon(MdiIcons.trashCanOutline, color: Colors.grey)),
+                  ],
+                  child: ListTile(
+                    tileColor: tileColor(data),
+                    contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    onTap: () => onHockeyEventTap(context, data, _matchID),
+                    title: Text(data['group_name'],
+                        style: _defaultTextStyle(context).copyWith(fontSize: 18)),
+                    trailing: Container(
+                      width: 55,
+                      child: Text(
+                        loggedUsers.length.toString() + '/' + data['max_players'],
+                        style: _defaultTextStyle(context).copyWith(fontSize: 20),
+                      ),
                     ),
+                    leading: data['sport_type'] == 'ice_hockey'
+                        ? sportLogo(true, _matchID)
+                        : sportLogo(false, _matchID),
                   ),
-                  leading: data['sport_type'] == 'ice_hockey'
-                      ? sportLogo(true, matchId)
-                      : sportLogo(false, matchId),
                 );
               });
         }
@@ -189,7 +230,7 @@ class _DashboardState extends State<Dashboard> {
       endDrawer: chatDialog(),
       appBar: appBar(context, appLocalizations),
       floatingActionButton: floatingActionButton(),
-      body: content(),
+      body: content(appLocalizations),
     );
   }
 }
