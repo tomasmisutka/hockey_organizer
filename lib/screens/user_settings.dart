@@ -80,10 +80,7 @@ class _UserSettingsState extends State<UserSettings> {
         children: [
           Text(appLocalizations.translate('email_address') + ': ' + widget.firebaseUser.email,
               style: _contentStyle),
-          const SizedBox(height: 5),
-          Text(appLocalizations.translate('name') + ': ' + widget.firebaseUser.displayName,
-              style: _contentStyle),
-          const SizedBox(height: 50),
+          const SizedBox(height: 60),
           Text(appLocalizations.translate('choose_favourite_team'), style: _contentStyle),
           const SizedBox(height: 8),
           teamsDropdownButton(context),
