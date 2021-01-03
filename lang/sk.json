@@ -52,5 +52,9 @@
   "name": "Meno",
   "max_players": "Počet hráčov",
   "remove": "chceš vyhodiť hráca",
-  "are_you_sure": "Ste si istý?"
+  "are_you_sure": "Ste si istý?",
+  "join": "Pridať sa",
+  "leave": "Opustiť",
+  "cancel_match": "Zrušiť zápas",
+  "edit": "Upraviť"
 }

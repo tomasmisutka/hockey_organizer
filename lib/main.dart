@@ -12,15 +12,12 @@ import 'authentication_wrapper.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FirebaseApp app = await Firebase.initializeApp();
+  await Firebase.initializeApp();
   FirebaseFirestore.instance.settings = Settings(persistenceEnabled: true);
-  runApp(HockeyOrganizer(app));
+  runApp(HockeyOrganizer());
 }
 
 class HockeyOrganizer extends StatelessWidget {
-  final FirebaseApp firebaseApp;
-  HockeyOrganizer(this.firebaseApp);
-
   @override
   Widget build(BuildContext context) {
     HockeyThemes themes = HockeyThemes();
@@ -42,7 +39,7 @@ class HockeyOrganizer extends StatelessWidget {
               supportedLocales: AppLocalizations.supportedLocales(),
               localizationsDelegates: AppLocalizations.localizationsDelegates(),
               localeResolutionCallback: AppLocalizations.localeResolutionCallback,
-              home: _Splash(firebaseApp),
+              home: _Splash(),
             ),
           ),
         ),
@@ -52,13 +49,11 @@ class HockeyOrganizer extends StatelessWidget {
 }
 
 class _Splash extends StatelessWidget {
-  final FirebaseApp firebaseApp;
-  _Splash(this.firebaseApp);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SplashScreenView(
-        home: AuthenticationWrapper(firebaseApp),
+        home: AuthenticationWrapper(),
         duration: 2000,
         imageSize: 280,
         imageSrc: "assets/logo.png",

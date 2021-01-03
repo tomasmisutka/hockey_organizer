@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/models/match_detail.dart';
@@ -15,9 +14,8 @@ import 'user_settings.dart';
 
 class Dashboard extends StatefulWidget {
   final User firebaseUser;
-  final FirebaseApp firebaseApp;
 
-  Dashboard(this.firebaseUser, this.firebaseApp);
+  Dashboard(this.firebaseUser);
 
   @override
   _DashboardState createState() => _DashboardState();
@@ -26,7 +24,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool currentInternetAccess = false;
-  // Color tileColor = Colors.white;
+  User get firebaseUser => widget.firebaseUser;
 
   TextStyle _defaultTextStyle(BuildContext context) {
     return TextStyle(
@@ -61,10 +59,8 @@ class _DashboardState extends State<Dashboard> {
 
   Widget userProfileIcon(BuildContext context, String url) {
     return FlatButton(
-      onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (_) => ThemeConsumer(child: UserSettings(widget.firebaseUser)))),
+      onPressed: () => Navigator.push(context,
+          MaterialPageRoute(builder: (_) => ThemeConsumer(child: UserSettings(firebaseUser)))),
       child: Container(
         height: 40,
         width: 40,
@@ -108,12 +104,10 @@ class _DashboardState extends State<Dashboard> {
       leading: IconButton(
           icon: Icon(Icons.add, color: Theme.of(context).floatingActionButtonTheme.foregroundColor),
           iconSize: 30,
-          onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => ThemeProvider(child: AddMatch(widget.firebaseUser))))),
+          onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => ThemeProvider(child: AddMatch(firebaseUser))))),
       actions: [
-        userProfileIcon(context, widget.firebaseUser.photoURL),
+        userProfileIcon(context, firebaseUser.photoURL),
       ],
     );
   }
@@ -145,7 +139,9 @@ class _DashboardState extends State<Dashboard> {
         data['group_name'],
         data['sport_type']);
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MatchDetailScreen(eventDetail, eventId)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => MatchDetailScreen(eventDetail, eventId, firebaseUser)));
   }
 
   Widget content() {
@@ -161,9 +157,8 @@ class _DashboardState extends State<Dashboard> {
                 String matchId = snapshot.data.docs[int].id;
                 Map<String, dynamic> loggedUsers = data['logged_players'];
                 return ListTile(
-                  tileColor: loggedUsers.containsKey(widget.firebaseUser.uid)
-                      ? Colors.greenAccent
-                      : Colors.white,
+                  tileColor:
+                      loggedUsers.containsKey(firebaseUser.uid) ? Colors.greenAccent : Colors.white,
                   contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   onTap: () => onHockeyEventTap(context, data, matchId),
                   title: Text(data['group_name'],

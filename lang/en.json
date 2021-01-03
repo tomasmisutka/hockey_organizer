@@ -48,5 +48,9 @@
   "name": "Name",
   "max_players": "Max players",
   "remove": "remove player",
-  "are_you_sure": "Are you sure?"
+  "are_you_sure": "Are you sure?",
+  "join": "Join",
+  "leave": "Leave",
+  "cancel_match": "Cancel match",
+  "edit": "Edit"
 }
