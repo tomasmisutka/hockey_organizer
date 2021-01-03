@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hockey_organizer/components/CustomTextField.dart';
+import 'package:hockey_organizer/components/introduction_textfield.dart';
 import 'package:hockey_organizer/screens/reset_password.dart';
 import 'package:hockey_organizer/services/authentication.dart';
 import 'package:hockey_organizer/utils/buble_indicator_painter.dart';
@@ -419,7 +419,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   height: 190.0,
                   child: Column(
                     children: [
-                      CustomTextField(
+                      IntroductionTextField(
                         controller: _loginEmailController,
                         focusNode: _loginEmailFocusNode,
                         hintText: appLocalizations.translate('email_address'),
@@ -427,7 +427,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         onFieldSubmitted: focusLoginPasswordTextField,
                       ),
                       textFieldDivider(),
-                      CustomTextField(
+                      IntroductionTextField(
                         controller: _loginPasswordController,
                         focusNode: _loginPasswordFocusNode,
                         hintText: appLocalizations.translate('password'),
@@ -489,28 +489,28 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   height: 360.0,
                   child: Column(
                     children: [
-                      CustomTextField(
+                      IntroductionTextField(
                           controller: _registerNameController,
                           focusNode: _registerNameFocusNode,
                           hintText: appLocalizations.translate('name_and_surname'),
                           type: TextFieldType.NAME_AND_SURNAME,
                           onFieldSubmitted: focusRegisterEmailTextField),
                       textFieldDivider(),
-                      CustomTextField(
+                      IntroductionTextField(
                           controller: _registerEmailController,
                           focusNode: _registerEmailFocusNode,
                           hintText: appLocalizations.translate('email_address'),
                           type: TextFieldType.EMAIL,
                           onFieldSubmitted: focusRegisterPasswordTextField),
                       textFieldDivider(),
-                      CustomTextField(
+                      IntroductionTextField(
                           controller: _registerPasswordController,
                           focusNode: _registerPasswordFocusNode,
                           hintText: appLocalizations.translate('password'),
                           type: TextFieldType.PASSWORD,
                           onFieldSubmitted: focusRegisterRepeatPasswordTextField),
                       textFieldDivider(),
-                      CustomTextField(
+                      IntroductionTextField(
                           controller: _registerRepeatPasswordController,
                           focusNode: _registerRepeatPasswordFocusNode,
                           hintText: appLocalizations.translate('repeat_password'),

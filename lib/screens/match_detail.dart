@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hockey_organizer/components/action_button.dart';
 import 'package:hockey_organizer/models/match_detail.dart';
 import 'package:hockey_organizer/models/player.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -32,7 +33,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
   AppBar appBar(BuildContext context, TextStyle textStyle) {
     return AppBar(
       iconTheme: IconThemeData(color: defaultColor(context)),
-      title: Text(matchDetail.groupName, style: textStyle),
+      title: matchDetail.getGroupName(context, textStyle, matchID),
     );
   }
 
@@ -57,11 +58,6 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
     return Icon(Icons.person, size: 30, color: personIconColor);
   }
 
-  Future<void> updateData(Map<String, dynamic> updatedData) async {
-    DocumentReference _reference = FirebaseFirestore.instance.collection('matches').doc(matchID);
-    await _reference.update(updatedData);
-  }
-
   void showAlert(BuildContext context, Player player) {
     AppLocalizations _appLocalizations = AppLocalizations.of(context);
     CoolAlert.show(
@@ -74,7 +70,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
         cancelBtnTextStyle: TextStyle(color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold),
         onConfirmBtnTap: () {
           matchDetail.loggedPlayers.remove(player.uid);
-          updateData({'logged_players': matchDetail.loggedPlayers});
+          matchDetail.updateData({'logged_players': matchDetail.loggedPlayers}, matchID);
           Navigator.pop(context);
         },
         text: _appLocalizations.translate('remove') + ' ' + player.name);
@@ -95,40 +91,72 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
   Widget editIcon(BuildContext context, AppLocalizations appLocalizations) {
     return Visibility(
       child: Align(
-          child: RaisedButton(
-            onPressed: () => onPressEditIcon(context),
-            color: Colors.orangeAccent,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            child: Text(
-              appLocalizations.translate('edit'),
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
+          child: ActionButton(
+            onPressed: () => onPressEditIcon(context, appLocalizations),
+            buttonColor: Colors.orangeAccent,
+            buttonText: 'edit',
           ),
           alignment: Alignment.bottomLeft),
       visible: firebaseUser.uid == matchDetail.owner ? true : false,
     );
   }
 
-  void onPressEditIcon(BuildContext context) {
-    DocumentReference _reference = FirebaseFirestore.instance.collection('matches').doc(matchID);
-    showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-              title: Text('edit dialog'),
-              content: Column(
-                children: [
-                  TextField(),
-                  TextField(),
-                ],
-              ),
-              actions: [
-                RaisedButton(
-                  onPressed: () {},
-                  color: Colors.orangeAccent,
-                  child: Text('save edits', style: TextStyle(color: Colors.white)),
-                )
-              ],
-            ));
+  AlertDialog alertDialog(AppLocalizations appLocalizations, DocumentSnapshot data) {
+    // String _date;
+    // String _time = data['time'];
+    TextEditingController _groupController = TextEditingController();
+    TextEditingController _placeController = TextEditingController();
+    TextEditingController _maxPlayersController = TextEditingController();
+    _groupController.text = data['group_name'];
+    _placeController.text = data['place'];
+    _maxPlayersController.text = data['max_players'];
+    TextStyle contentStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 20);
+    return AlertDialog(
+      title: Container(
+          alignment: Alignment.center, child: Text(appLocalizations.translate('edit_match'))),
+      titleTextStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          TextField(
+            controller: _groupController,
+            style: contentStyle,
+          ),
+          // TimePicker(appLocalizations, onChangedDatePicker, _date, true),
+          // TimePicker(appLocalizations, onChangedTimePicker, _time),
+          TextField(
+            controller: _placeController,
+            style: contentStyle,
+          ),
+          TextField(
+            controller: _maxPlayersController,
+            style: contentStyle,
+            keyboardType: TextInputType.number,
+          ),
+        ],
+      ),
+      contentPadding: EdgeInsets.all(10),
+      actions: [
+        ActionButton(
+            onPressed: () {
+              matchDetail.updateData({
+                "group_name": _groupController.text.trim().toUpperCase(),
+                "place": _placeController.text.trim().toUpperCase(),
+                "max_players": _maxPlayersController.text.trim(),
+              }, matchID);
+              Navigator.pop(context);
+            },
+            buttonColor: Colors.orangeAccent,
+            buttonText: 'save_edits'),
+        ActionButton(
+            buttonText: 'cancel', buttonColor: Colors.red, onPressed: () => Navigator.pop(context))
+      ],
+    );
+  }
+
+  void onPressEditIcon(BuildContext context, AppLocalizations appLocalizations) async {
+    DocumentSnapshot data = await matchDetail.getData(context, matchID);
+    showDialog(context: context, builder: (_) => alertDialog(appLocalizations, data));
   }
 
   void onPressCancelMatch(BuildContext context, AppLocalizations appLocalizations) {
@@ -152,25 +180,21 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
   Widget deleteMatchButton(BuildContext context, AppLocalizations appLocalizations) {
     return Align(
       alignment: Alignment.bottomRight,
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: Text(appLocalizations.translate('cancel_match'),
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        color: Colors.red,
-        padding: EdgeInsets.all(10),
-        onPressed: () => onPressCancelMatch(context, appLocalizations),
-      ),
+      child: ActionButton(
+          onPressed: () => onPressCancelMatch(context, appLocalizations),
+          buttonText: 'cancel_match',
+          buttonColor: Colors.red),
     );
   }
 
   void onPressJoinButton() {
     matchDetail.loggedPlayers[firebaseUser.uid] = firebaseUser.displayName;
-    updateData({'logged_players': matchDetail.loggedPlayers});
+    matchDetail.updateData({'logged_players': matchDetail.loggedPlayers}, matchID);
   }
 
   void onPressLeaveButton() {
     matchDetail.loggedPlayers.remove(firebaseUser.uid);
-    updateData({'logged_players': matchDetail.loggedPlayers});
+    matchDetail.updateData({'logged_players': matchDetail.loggedPlayers}, matchID);
   }
 
   Widget statusButton(

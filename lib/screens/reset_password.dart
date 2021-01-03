@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:hockey_organizer/components/CustomTextField.dart';
+import 'package:hockey_organizer/components/introduction_textfield.dart';
 import 'package:hockey_organizer/services/authentication.dart';
 import 'package:provider/provider.dart';
 
@@ -44,7 +44,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 alignment: Alignment.topCenter,
                 decoration:
                     BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
-                child: CustomTextField(
+                child: IntroductionTextField(
                     controller: emailController,
                     focusNode: emailNode,
                     hintText: appLocalizations.translate('email_address'),

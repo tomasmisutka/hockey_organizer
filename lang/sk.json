@@ -46,6 +46,7 @@
   "sport": "Šport",
   "group": "Skupina",
   "enter_group_name": "Zadajte názov skupiny",
+  "enter_place": "Zadajte miesto",
   "enter_players": "Zadajte počet hráčov",
   "too_long_name": "Príliš dlhý názov",
   "choose_favourite_team": "Obľúbený tím z NHL",
@@ -56,5 +57,7 @@
   "join": "Pridať sa",
   "leave": "Opustiť",
   "cancel_match": "Zrušiť zápas",
-  "edit": "Upraviť"
+  "edit": "Upraviť",
+  "edit_match": "Upraviť zápas",
+  "save_edits": "Uložiť zmeny"
 }

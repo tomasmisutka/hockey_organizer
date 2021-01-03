@@ -29,9 +29,9 @@
   "new_match": "New match",
   "date": "Date",
   "time": "Time",
-  "choose_place": "Choose place",
-  "choose_date": "Choose date",
-  "choose_time": "Choose time",
+  "choose_place": "Select place",
+  "choose_date": "Select date",
+  "choose_time": "Select time",
   "cancel": "Cancel",
   "confirm": "Confirm",
   "place": "Place",
@@ -42,6 +42,7 @@
   "sport": "Sport",
   "group": "Group",
   "enter_group_name": "Enter group name",
+  "enter_place": "Enter place",
   "enter_players": "Enter max players",
   "too_long_name": "Too long name",
   "choose_favourite_team": "Your favourite NHL team",
@@ -52,5 +53,7 @@
   "join": "Join",
   "leave": "Leave",
   "cancel_match": "Cancel match",
-  "edit": "Edit"
+  "edit": "Edit",
+  "edit_match": "Edit match",
+  "save_edits": "Save edits"
 }

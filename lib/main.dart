@@ -33,6 +33,8 @@ class HockeyOrganizer extends StatelessWidget {
         child: ThemeConsumer(
           child: Builder(
             builder: (themeContext) => MaterialApp(
+              builder: (context, child) => MediaQuery(
+                  data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: child),
               title: 'Hockey Organizer',
               theme: ThemeProvider.themeOf(themeContext).data,
               debugShowCheckedModeBanner: false,

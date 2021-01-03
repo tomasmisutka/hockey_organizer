@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hockey_organizer/components/action_button.dart';
 
 import '../app_localization.dart';
 
@@ -65,6 +66,19 @@ class MatchDetail {
         });
   }
 
+  Widget getGroupName(BuildContext context, TextStyle style, String matchID) {
+    DocumentReference _matchReference =
+        FirebaseFirestore.instance.collection('matches').doc(matchID);
+    return StreamBuilder(
+        stream: _matchReference.snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting)
+            return CircularProgressIndicator();
+          var matchData = snapshot.data;
+          return Text(matchData['group_name'], style: style);
+        });
+  }
+
   Widget getJoinOrLeaveButton(
       BuildContext context,
       AppLocalizations appLocalizations,
@@ -72,31 +86,37 @@ class MatchDetail {
       String uID,
       Function onJoinButtonPress,
       Function onLeaveButtonPress) {
-    String textJoin = appLocalizations.translate('join');
-    String textLeave = appLocalizations.translate('leave');
     return StreamBuilder(
         stream: matchReference.snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting)
             return CircularProgressIndicator();
+          if (snapshot.hasError) print('problem with buttons'); //remove then
           var matchData = snapshot.data;
           if (matchData['logged_players'].length.toString() == matchData['max_players'] &&
               !matchData['logged_players'].containsKey(uID)) return Container();
           return Align(
             alignment: Alignment.bottomRight,
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              child: Text(
-                  matchData['logged_players'].containsKey(uID) == true ? textLeave : textJoin,
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              color:
+            child: ActionButton(
+              buttonColor:
                   matchData['logged_players'].containsKey(uID) == true ? Colors.red : Colors.green,
-              padding: EdgeInsets.all(10),
+              buttonText: matchData['logged_players'].containsKey(uID) == true ? 'leave' : 'join',
               onPressed: matchData['logged_players'].containsKey(uID) == true
                   ? onLeaveButtonPress
                   : onJoinButtonPress,
             ),
           );
         });
+  }
+
+  Future<void> updateData(Map<String, dynamic> updatedData, String matchID) async {
+    DocumentReference _reference = FirebaseFirestore.instance.collection('matches').doc(matchID);
+    await _reference.update(updatedData);
+  }
+
+  Future<DocumentSnapshot> getData(BuildContext context, String matchID) async {
+    DocumentReference _reference = FirebaseFirestore.instance.collection('matches').doc(matchID);
+    dynamic data = await _reference.get();
+    return data;
   }
 }
