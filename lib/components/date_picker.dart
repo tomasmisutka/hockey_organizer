@@ -62,6 +62,7 @@ class _DatePickerState extends State<DatePicker> {
         Expanded(
           child: TextField(
               controller: controller,
+              style: TextStyle(fontWeight: FontWeight.bold),
               textInputAction: TextInputAction.done,
               onTap: () => showDateOwnPicker(context),
               decoration: InputDecoration(

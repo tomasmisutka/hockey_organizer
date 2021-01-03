@@ -19,7 +19,7 @@ class _TimePickerState extends State<TimePicker> {
   @override
   void initState() {
     _selectedTime = initialValue;
-    controller.text = _selectedTime.hour.toString() + ":" + _selectedTime.minute.toString();
+    controller.text = _selectedTime.hour.toString() + ":" + _adjustMinutes(_selectedTime.minute);
     super.initState();
   }
 
@@ -56,6 +56,7 @@ class _TimePickerState extends State<TimePicker> {
         Expanded(
           child: TextField(
               controller: controller,
+              style: TextStyle(fontWeight: FontWeight.bold),
               textInputAction: TextInputAction.done,
               onTap: () => _selectTime(context),
               decoration: InputDecoration(

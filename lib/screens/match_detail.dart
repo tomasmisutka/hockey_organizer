@@ -3,6 +3,9 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hockey_organizer/components/action_button.dart';
+import 'package:hockey_organizer/components/date_picker.dart';
+import 'package:hockey_organizer/components/match_textfield.dart';
+import 'package:hockey_organizer/components/time_picker.dart';
 import 'package:hockey_organizer/models/match_detail.dart';
 import 'package:hockey_organizer/models/player.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -102,37 +105,34 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
   }
 
   AlertDialog alertDialog(AppLocalizations appLocalizations, DocumentSnapshot data) {
-    // String _date;
-    // String _time = data['time'];
     TextEditingController _groupController = TextEditingController();
     TextEditingController _placeController = TextEditingController();
     TextEditingController _maxPlayersController = TextEditingController();
+    TextEditingController _dateController = TextEditingController();
+    TextEditingController _timeController = TextEditingController();
     _groupController.text = data['group_name'];
     _placeController.text = data['place'];
     _maxPlayersController.text = data['max_players'];
-    TextStyle contentStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 20);
+    _dateController.text = data['date'];
+    _timeController.text = data['time'];
     return AlertDialog(
+      elevation: 12,
+      scrollable: true,
       title: Container(
           alignment: Alignment.center, child: Text(appLocalizations.translate('edit_match'))),
       titleTextStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
       content: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          TextField(
-            controller: _groupController,
-            style: contentStyle,
-          ),
-          // TimePicker(appLocalizations, onChangedDatePicker, _date, true),
-          // TimePicker(appLocalizations, onChangedTimePicker, _time),
-          TextField(
-            controller: _placeController,
-            style: contentStyle,
-          ),
-          TextField(
-            controller: _maxPlayersController,
-            style: contentStyle,
-            keyboardType: TextInputType.number,
-          ),
+          MatchTextField(_groupController, FocusNode(), Icons.description_outlined, 'group',
+              'enter_group_name'),
+          DatePicker(_dateController, DateTime.now()),
+          TimePicker(_timeController, TimeOfDay.now()),
+          MatchTextField(
+              _placeController, FocusNode(), Icons.place_outlined, 'place', 'enter_place'),
+          MatchTextField(_maxPlayersController, FocusNode(), Icons.people_outline, 'max_players',
+              'enter_players',
+              inputType: TextInputType.number),
         ],
       ),
       contentPadding: EdgeInsets.all(10),
@@ -143,6 +143,8 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                 "group_name": _groupController.text.trim().toUpperCase(),
                 "place": _placeController.text.trim().toUpperCase(),
                 "max_players": _maxPlayersController.text.trim(),
+                "date": _dateController.text.trim(),
+                "time": _timeController.text.trim(),
               }, matchID);
               Navigator.pop(context);
             },
@@ -197,7 +199,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
     matchDetail.updateData({'logged_players': matchDetail.loggedPlayers}, matchID);
   }
 
-  Widget statusButton(
+  Widget playerConditionButton(
       BuildContext context, AppLocalizations appLocalizations, DocumentReference reference) {
     if (firebaseUser.uid == matchDetail.owner) return deleteMatchButton(context, appLocalizations);
     return matchDetail.getJoinOrLeaveButton(context, appLocalizations, reference, firebaseUser.uid,
@@ -228,7 +230,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                   ),
                 ),
                 editIcon(context, appLocalizations),
-                statusButton(context, appLocalizations, matchReference),
+                playerConditionButton(context, appLocalizations, matchReference),
               ],
             ),
           ),
