@@ -11,19 +11,13 @@ class ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppLocalizations appLocalizations = AppLocalizations.of(context);
-    return Container(
-      width: double.infinity,
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        onPressed: onPressed,
-        color: buttonColor,
-        elevation: 10,
-        child: Text(appLocalizations.translate(buttonText),
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            )),
-      ),
+    return RaisedButton(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      onPressed: onPressed,
+      color: buttonColor,
+      elevation: 7,
+      child: Text(appLocalizations.translate(buttonText),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
     );
   }
 }

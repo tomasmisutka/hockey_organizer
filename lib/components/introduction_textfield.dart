@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatefulWidget {
+class IntroductionTextField extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final Function(String) onFieldSubmitted;
@@ -8,7 +8,7 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final bool isRepeatingPassword;
 
-  CustomTextField({
+  IntroductionTextField({
     this.controller,
     this.focusNode,
     this.onFieldSubmitted,
@@ -17,10 +17,10 @@ class CustomTextField extends StatefulWidget {
     this.isRepeatingPassword = false,
   });
   @override
-  _CustomTextFieldState createState() => _CustomTextFieldState();
+  _IntroductionTextFieldState createState() => _IntroductionTextFieldState();
 }
 
-class _CustomTextFieldState extends State<CustomTextField> {
+class _IntroductionTextFieldState extends State<IntroductionTextField> {
   bool _isObscureText = true;
 
   Widget _renderPrefixIcon() {

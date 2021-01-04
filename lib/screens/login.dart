@@ -1,10 +1,11 @@
-import 'package:connectivity/connectivity.dart';
+import 'dart:io';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hockey_organizer/components/CustomTextField.dart';
+import 'package:hockey_organizer/components/introduction_textfield.dart';
 import 'package:hockey_organizer/screens/reset_password.dart';
 import 'package:hockey_organizer/services/authentication.dart';
 import 'package:hockey_organizer/utils/buble_indicator_painter.dart';
@@ -106,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   void onPressLogInButton(BuildContext context, AppLocalizations appLocalizations) async {
     String email = _loginEmailController.text.trim();
-    if (await validInternetConnection(appLocalizations) == false) return;
+    if (await checkInternetConnection(appLocalizations) == false) return;
     if (validEmailAddress(email.toLowerCase(), appLocalizations) == false) return;
     startLoading();
     await context
@@ -130,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   void onPressRegisterButton(BuildContext context, AppLocalizations appLocalizations) async {
     String emailAddress = _registerEmailController.text.trim();
-    if (await validInternetConnection(appLocalizations) == false) return;
+    if (await checkInternetConnection(appLocalizations) == false) return;
     if (validNameAndSurname(appLocalizations) == false) return;
     if (validEmailAddress(emailAddress.toLowerCase(), appLocalizations) == false) return;
     if (validPassword(appLocalizations) == false) return;
@@ -158,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   void onPressGoogleIcon(AppLocalizations appLocalizations) async {
-    if (await validInternetConnection(appLocalizations) == false) return;
+    if (await checkInternetConnection(appLocalizations) == false) return;
     startLoading();
     await context.read<AuthenticationService>().signInWithGoogle();
     if (!mounted) return;
@@ -166,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   void onPressFacebookButton(AppLocalizations appLocalizations) async {
-    if (await validInternetConnection(appLocalizations) == false) return;
+    if (await checkInternetConnection(appLocalizations) == false) return;
     startLoading();
     await context.read<AuthenticationService>().signInWithFacebook();
     if (!mounted) return;
@@ -236,12 +237,14 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     return true;
   }
 
-  Future<bool> validInternetConnection(AppLocalizations appLocalizations) async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile)
-      return true;
-    else if (connectivityResult == ConnectivityResult.wifi) return true;
-    if (appLocalizations != null) {
+  Future<bool> checkInternetConnection(AppLocalizations appLocalizations) async {
+    try {
+      final internetAccess = await InternetAddress.lookup('google.com');
+      if (internetAccess.isNotEmpty && internetAccess[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (e) {
+      print(e.message);
       setState(() {
         _errorText = appLocalizations.translate('no_internet_connection');
       });
@@ -416,7 +419,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   height: 190.0,
                   child: Column(
                     children: [
-                      CustomTextField(
+                      IntroductionTextField(
                         controller: _loginEmailController,
                         focusNode: _loginEmailFocusNode,
                         hintText: appLocalizations.translate('email_address'),
@@ -424,7 +427,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         onFieldSubmitted: focusLoginPasswordTextField,
                       ),
                       textFieldDivider(),
-                      CustomTextField(
+                      IntroductionTextField(
                         controller: _loginPasswordController,
                         focusNode: _loginPasswordFocusNode,
                         hintText: appLocalizations.translate('password'),
@@ -486,28 +489,28 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   height: 360.0,
                   child: Column(
                     children: [
-                      CustomTextField(
+                      IntroductionTextField(
                           controller: _registerNameController,
                           focusNode: _registerNameFocusNode,
                           hintText: appLocalizations.translate('name_and_surname'),
                           type: TextFieldType.NAME_AND_SURNAME,
                           onFieldSubmitted: focusRegisterEmailTextField),
                       textFieldDivider(),
-                      CustomTextField(
+                      IntroductionTextField(
                           controller: _registerEmailController,
                           focusNode: _registerEmailFocusNode,
                           hintText: appLocalizations.translate('email_address'),
                           type: TextFieldType.EMAIL,
                           onFieldSubmitted: focusRegisterPasswordTextField),
                       textFieldDivider(),
-                      CustomTextField(
+                      IntroductionTextField(
                           controller: _registerPasswordController,
                           focusNode: _registerPasswordFocusNode,
                           hintText: appLocalizations.translate('password'),
                           type: TextFieldType.PASSWORD,
                           onFieldSubmitted: focusRegisterRepeatPasswordTextField),
                       textFieldDivider(),
-                      CustomTextField(
+                      IntroductionTextField(
                           controller: _registerRepeatPasswordController,
                           focusNode: _registerRepeatPasswordFocusNode,
                           hintText: appLocalizations.translate('repeat_password'),
