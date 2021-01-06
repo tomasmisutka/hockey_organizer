@@ -12,7 +12,6 @@ class AuthenticationWrapper extends StatelessWidget {
     if (firebaseUser == null) {
       return LoginScreen();
     }
-    firebaseUser.reload();
     return Dashboard(firebaseUser);
   }
 }

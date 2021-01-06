@@ -25,9 +25,6 @@ class AuthenticationService {
         return appLocalizations.translate('account_does_not_exists');
       } else if (error.code == 'wrong-password') {
         return appLocalizations.translate('wrong_password');
-      } else if (error.code == 'network-request-failed') {
-        print('hurray');
-        return '';
       } else {
         return '';
       }
@@ -41,13 +38,11 @@ class AuthenticationService {
       {String displayName = '', String email = '', String password = ''}) async {
     AppLocalizations appLocalizations = AppLocalizations.of(context);
     try {
-      UserCredential userCredential =
-          await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-      await userCredential.user.updateProfile(displayName: displayName);
-      await userCredential.user.reload();
+      await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+      await _firebaseAuth.currentUser.updateProfile(displayName: displayName);
 
       try {
-        await userCredential.user.sendEmailVerification();
+        await _firebaseAuth.currentUser.sendEmailVerification();
         return '';
       } catch (e) {
         return e.toString();

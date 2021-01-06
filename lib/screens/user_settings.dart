@@ -19,6 +19,7 @@ class _UserSettingsState extends State<UserSettings> {
   HockeyTeams _teams = HockeyTeams();
   List<DropdownMenuItem<HockeyTeam>> _dropdownMenuItems;
   HockeyTeam _selectedTeam;
+  User get firebaseUser => widget.firebaseUser;
 
   @override
   void initState() {
@@ -78,7 +79,7 @@ class _UserSettingsState extends State<UserSettings> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(appLocalizations.translate('email_address') + ': ' + widget.firebaseUser.email,
+          Text(appLocalizations.translate('email_address') + ': ' + firebaseUser.email,
               style: _contentStyle),
           const SizedBox(height: 60),
           Text(appLocalizations.translate('choose_favourite_team'), style: _contentStyle),
@@ -103,7 +104,7 @@ class _UserSettingsState extends State<UserSettings> {
       appBar: AppBar(
         iconTheme:
             IconThemeData(color: Theme.of(context).floatingActionButtonTheme.foregroundColor),
-        title: Text(widget.firebaseUser.displayName,
+        title: Text(firebaseUser.displayName,
             style: TextStyle(
               color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
               fontWeight: FontWeight.bold,

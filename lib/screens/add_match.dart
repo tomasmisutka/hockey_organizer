@@ -34,9 +34,7 @@ class _AddMatchState extends State<AddMatch> {
   FocusNode _groupNode = FocusNode();
   Map<String, dynamic> loggedPlayers = {};
 
-  User get firebaseUser {
-    return widget.firebaseUser;
-  }
+  User get firebaseUser => widget.firebaseUser;
 
   @override
   void initState() {

@@ -204,7 +204,8 @@ class _DashboardState extends State<Dashboard> {
                     title: Text(data['group_name'],
                         style: _defaultTextStyle(context).copyWith(fontSize: 18)),
                     trailing: Container(
-                      width: 55,
+                      width: 70,
+                      alignment: Alignment.center,
                       child: Text(
                         loggedUsers.length.toString() + '/' + data['max_players'],
                         style: _defaultTextStyle(context).copyWith(fontSize: 20),

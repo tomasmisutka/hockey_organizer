@@ -130,7 +130,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   void onPressRegisterButton(BuildContext context, AppLocalizations appLocalizations) async {
-    String emailAddress = _registerEmailController.text.trim();
+    String emailAddress = _registerEmailController.text.trim().toLowerCase();
+    String password = _registerPasswordController.text.trim();
     if (await checkInternetConnection(appLocalizations) == false) return;
     if (validNameAndSurname(appLocalizations) == false) return;
     if (validEmailAddress(emailAddress.toLowerCase(), appLocalizations) == false) return;
@@ -143,8 +144,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         .signUp(
           context,
           displayName: _registerNameController.text.trim(),
-          email: emailAddress.toLowerCase(),
-          password: _registerPasswordController.text.trim(),
+          email: emailAddress,
+          password: password,
         )
         .then((error) {
       if (!mounted) return;
