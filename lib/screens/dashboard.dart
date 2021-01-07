@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hockey_organizer/app_localization.dart';
 import 'package:hockey_organizer/models/match_detail.dart';
+import 'package:hockey_organizer/models/message.dart';
 import 'package:hockey_organizer/screens/match_detail.dart';
 import 'package:hockey_organizer/screens/user_settings.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -28,12 +30,16 @@ class _DashboardState extends State<Dashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool currentInternetAccess = false;
   User get firebaseUser => widget.firebaseUser;
+  TextEditingController _messageController = TextEditingController();
+  FocusNode _messageNode = FocusNode();
 
   TextStyle _defaultTextStyle(BuildContext context) {
     return TextStyle(
         color: Theme.of(context).floatingActionButtonTheme.foregroundColor,
         fontWeight: FontWeight.bold);
   }
+
+  void unFocusMessageTextField() => _messageNode.unfocus();
 
   void assignInternetStatus() async {
     currentInternetAccess = await _checkInternetConnection();
@@ -79,17 +85,128 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget chatDialog() {
+  Widget chatHeader(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
-      height: MediaQuery.of(context).size.height * 0.9,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius:
-              BorderRadius.only(topLeft: Radius.circular(12), bottomLeft: Radius.circular(12))),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [],
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        children: [
+          IconButton(
+            icon: Icon(Icons.arrow_back),
+            iconSize: 30,
+            onPressed: () {
+              _messageController.clear();
+              Navigator.pop(context);
+            },
+          ),
+          Expanded(
+            child: Container(
+              alignment: Alignment.center,
+              child: Text('Messenger', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget messages(BuildContext context, AppLocalizations appLocalizations) {
+    Query _messagesReference =
+        FirebaseFirestore.instance.collection('messenger').orderBy('time', descending: true);
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.all(10),
+        child: StreamBuilder(
+          stream: _messagesReference.snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting)
+              return Container(
+                  child: Center(
+                      child: CircularProgressIndicator(
+                          backgroundColor: Theme.of(context).primaryColor)));
+            if (!snapshot.hasData)
+              return Container(
+                child: Center(
+                  child: Text(appLocalizations.translate('no_message')),
+                ),
+              );
+            var data = snapshot.data;
+            print('data');
+            Message message = Message(data['uid'], data['name'], data['time'], data['body']);
+            print(message.body);
+            return Container(
+              child: Text(message.body),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  String formatDate(DateTime dateTime) => DateFormat('dd.MM.yyyy kk:mm').format(dateTime);
+
+  Widget chatInputMessage(BuildContext context) {
+    AppLocalizations appLocalizations = AppLocalizations.of(context);
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _messageController,
+              focusNode: _messageNode,
+              style: TextStyle(fontWeight: FontWeight.bold),
+              decoration: InputDecoration(
+                hintText: appLocalizations.translate('enter_message'),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(width: 2, color: Theme.of(context).primaryColor),
+                ),
+                labelText: appLocalizations.translate('message'),
+              ),
+              keyboardType: TextInputType.text,
+            ),
+          ),
+          const SizedBox(width: 10),
+          GestureDetector(
+            onTap: () {
+              Message messageToSend = Message(firebaseUser.uid, firebaseUser.displayName,
+                  formatDate(DateTime.now()), _messageController.text.trim());
+              messageToSend.sendMessage();
+              _messageController.clear();
+            },
+            child: Container(
+              decoration:
+                  BoxDecoration(color: Theme.of(context).primaryColor, shape: BoxShape.circle),
+              child: Icon(Icons.send, color: Colors.white),
+              padding: EdgeInsets.all(8),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget chat(BuildContext context, AppLocalizations appLocalizations) {
+    return GestureDetector(
+      onTap: unFocusMessageTextField,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.92,
+        height: MediaQuery.of(context).size.height * 0.95,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius:
+                BorderRadius.only(topLeft: Radius.circular(12), bottomLeft: Radius.circular(12))),
+        child: Column(
+          children: [
+            chatHeader(context),
+            messages(context, appLocalizations),
+            chatInputMessage(context),
+          ],
+        ),
       ),
     );
   }
@@ -228,7 +345,7 @@ class _DashboardState extends State<Dashboard> {
     final AppLocalizations appLocalizations = AppLocalizations.of(context);
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: chatDialog(),
+      endDrawer: chat(context, appLocalizations),
       appBar: appBar(context, appLocalizations),
       floatingActionButton: floatingActionButton(),
       body: content(appLocalizations),

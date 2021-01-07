@@ -60,5 +60,8 @@
   "edit": "Upraviť",
   "edit_match": "Upraviť zápas",
   "save_edits": "Uložiť zmeny",
-  "delete": "Odstrániť"
+  "delete": "Odstrániť",
+  "enter_message": "Vložiť správu sem",
+  "message": "Správa",
+  "no_message": "Žiadne správy"
 }

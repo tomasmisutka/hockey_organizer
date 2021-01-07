@@ -59,8 +59,8 @@ class _Splash extends StatelessWidget {
         duration: 2000,
         imageSize: 280,
         imageSrc: "assets/logo.png",
-        text: 'Hockey\n  Organizer',
-        textType: TextType.ScaleAnimatedText,
+        text: 'Hockey\nOrganizer',
+        textType: TextType.NormalText,
         textStyle: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, height: 1.5),
       ),
     );

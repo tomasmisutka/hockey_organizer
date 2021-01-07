@@ -56,5 +56,8 @@
   "edit": "Edit",
   "edit_match": "Edit match",
   "save_edits": "Save edits",
-  "delete": "Delete"
+  "delete": "Delete",
+  "enter_message": "Enter message here",
+  "message": "Message",
+  "no_message": "No messages"
 }
