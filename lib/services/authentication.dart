@@ -11,8 +11,7 @@ class AuthenticationService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FacebookLogin _facebookLogin = FacebookLogin();
-
-  Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
+  Stream<User> get userChanges => _firebaseAuth.userChanges();
 
   //sign in with email & password
   Future<String> signIn(BuildContext context, {String email = '', String password = ''}) async {
@@ -40,12 +39,11 @@ class AuthenticationService {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       await _firebaseAuth.currentUser.updateProfile(displayName: displayName);
-
       try {
         await _firebaseAuth.currentUser.sendEmailVerification();
         return '';
-      } catch (e) {
-        return e.toString();
+      } catch (error) {
+        return error.toString();
       }
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {
@@ -69,12 +67,10 @@ class AuthenticationService {
           accessToken: googleSignInAuthentication.accessToken);
 
       await _firebaseAuth.signInWithCredential(googleCredential);
-    } on FirebaseAuthException catch (e) {
-      print(e);
-      return e.message;
-    } catch (e) {
-      print(e);
-      return e;
+    } on FirebaseAuthException catch (error) {
+      return error.message;
+    } catch (error) {
+      return error;
     }
     return '';
   }
@@ -132,7 +128,4 @@ class AuthenticationService {
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
   }
-
-  //reload user
-  Future<void> checkIfUsersEmailIsVerified() async => await _firebaseAuth.currentUser.reload();
 }

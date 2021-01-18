@@ -24,7 +24,7 @@ class HockeyOrganizer extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<AuthenticationService>(create: (_) => AuthenticationService()),
-        StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),
+        StreamProvider(create: (context) => context.read<AuthenticationService>().userChanges),
       ],
       child: ThemeProvider(
         saveThemesOnChange: true,
