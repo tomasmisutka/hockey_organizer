@@ -229,7 +229,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                   stream: matchReference.snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting)
-                      return CircularProgressIndicator();
+                      return Center(child: CircularProgressIndicator());
                     var matchDocument = snapshot.data;
                     matchDetail.loggedPlayers = matchDocument['logged_players'];
                     return ListView.builder(
